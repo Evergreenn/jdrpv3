@@ -1,0 +1,12 @@
+const About = () => {
+
+    return (
+        <div class="container">
+            <div class="row">
+                <div class="col"> .col </div>
+            </div>
+        </div>
+    )
+}
+
+export default About

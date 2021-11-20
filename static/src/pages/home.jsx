@@ -1,3 +1,5 @@
+import React, {useState} from 'react';
+
 const Home = () => {
 
   return (
@@ -6,7 +8,7 @@ const Home = () => {
         <div class="col"> home </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default <Home/>

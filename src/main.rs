@@ -1,5 +1,5 @@
 use actix_web::dev::ServiceRequest;
-use actix_web::{get, post, web, App, Error, HttpResponse, HttpServer};
+use actix_web::{http, get, post, web, App, Error, HttpResponse, HttpServer};
 
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use actix_web_httpauth::middleware::HttpAuthentication;
@@ -8,7 +8,7 @@ use serde::Deserialize;
 use actix_web_grants::proc_macro::{has_any_role, has_permissions};
 // Used for integration with `actix-web-httpauth`
 use actix_web_grants::permissions::AttachPermissions;
-
+use actix_cors::Cors;
 use crate::claim::Claims;
 
 mod claim;
@@ -35,7 +35,17 @@ async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<Servi
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         let auth = HttpAuthentication::bearer(validator);
-        App::new().service(create_token).service(
+
+        let cors = Cors::default()
+        .allow_any_origin()
+        // .send_wildcard()
+        .allowed_methods(vec!["GET", "POST"])
+        .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT, http::header::CONTENT_TYPE])
+        .max_age(3600);
+
+        App::new()
+        .wrap(cors)
+        .service(create_token).service(
             web::scope("/api")
                 .wrap(auth)
                 .service(permission_secured)

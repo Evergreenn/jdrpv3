@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import dotenv from "dotenv"
+import Cookies from "universal-cookie"
+import { Route, Routes, Navigate} from 'react-router-dom';
+
 
 const AccountCreation = () => {
 
@@ -8,6 +10,7 @@ const AccountCreation = () => {
     const [password, SetPassword] = useState("");
     const [passwordrepeat, SetPasswordRepeat] = useState("");
     const [error, SetError] = useState("");
+    const [redirect, SetRedirect] = useState(false);
 
     // dotenv.config();
 
@@ -29,13 +32,19 @@ const AccountCreation = () => {
             return false;
         }
 
-        console.log(name);
+        if (name === "") {
+            SetError("You must specify a username");
+            return false;
+        }
 
         axios.post("http://localhost:8081/token", {
             "username": name,
-            "permissions": ["OP_GET_SECURED_INFO", "ROLE_ADMIN"]
+            "password": password
         }).then(response => {
-            console.log(response.data);
+            const cookies = new Cookies();
+
+            cookies.set("token", response.data)
+            SetRedirect(true);
         }).catch(error => {
             console.log(error);
         })
@@ -43,25 +52,35 @@ const AccountCreation = () => {
     }
 
     return (
-        <div className="container">
-            <div className="is-center row">
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        Nom :
-                        <input type="text" value={name} onChange={handleChangeName} /> </label>
-                    <label>
-                        Password :
-                        <input type="password" value={password} onChange={handleChangePassword} /> </label>
-                    <label>
-                        Repeat Password :
-                        <input type="password" value={passwordrepeat} onChange={handleChangePasswordRepeat} /> </label>
-                    <input className="pull-right" type="submit" value="Envoyer" />
-                </form>
+
+        <>
+            {redirect &&
+            <Routes>
+                <Route path="*" element={<Navigate replace to="/" reload={true}/>} />
+            </Routes>
+            }
+
+            <div className="container">
+                <div className="is-center row">
+
+                    <form onSubmit={handleSubmit}>
+                        <label>
+                            Nom :
+                            <input type="text" value={name} onChange={handleChangeName} /> </label>
+                        <label>
+                            Password :
+                            <input type="password" value={password} onChange={handleChangePassword} /> </label>
+                        <label>
+                            Repeat Password :
+                            <input type="password" value={passwordrepeat} onChange={handleChangePasswordRepeat} /> </label>
+                        <input className="pull-right" type="submit" value="Envoyer" />
+                    </form>
+                </div>
+                <div className="is-center row">
+                    <p className="text-error">{error}</p>
+                </div>
             </div>
-            <div className="is-center row">
-                <p className="text-error">{error}</p>
-            </div>
-        </div>
+        </>
     )
 }
 

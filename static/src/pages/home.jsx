@@ -1,13 +1,12 @@
 const Home = () => {
 
-    return(
-        <div class="container">
-        <div class="columns">
-          <div class="column col-12">qqqqqqqqq <p>tetert</p></div>
-        </div>
+  return (
+    <div class="container">
+      <div class="row">
+        <div class="col"> home </div>
       </div>
-
-    )
+    </div>
+  )
 }
 
 export default Home

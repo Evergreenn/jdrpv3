@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie"
-import { Route, Routes, Navigate} from 'react-router-dom';
+import {useNavigate, Routes, Route, Navigate} from 'react-router-dom';
 
 
 const AccountCreation = () => {
@@ -12,7 +12,7 @@ const AccountCreation = () => {
     const [error, SetError] = useState("");
     const [redirect, SetRedirect] = useState(false);
 
-    // dotenv.config();
+    let navigate = useNavigate()
 
     const handleChangeName = (e) => {
         SetName(e.target.value);
@@ -43,8 +43,12 @@ const AccountCreation = () => {
         }).then(response => {
             const cookies = new Cookies();
 
-            cookies.set("token", response.data)
+            cookies.set("token", response.data, {
+                sameSite: "lax",
+                secure: true
+            })
             SetRedirect(true);
+           
         }).catch(error => {
             console.log(error);
         })
@@ -55,9 +59,10 @@ const AccountCreation = () => {
 
         <>
             {redirect &&
-            <Routes>
-                <Route path="*" element={<Navigate replace to="/" reload={true}/>} />
-            </Routes>
+            navigate("/", {replace:true})
+            // <Routes>
+            //     <Route path="*" element={<Navigate replace to="/" reload={true}/>}/>
+            // </Routes>
             }
 
             <div className="container">

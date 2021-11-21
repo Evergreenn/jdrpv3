@@ -1,35 +1,18 @@
 use actix_web::dev::ServiceRequest;
-use actix_web::{get, http, post, web, App, Error, HttpResponse, HttpServer};
+use actix_web::{http, post, web, App, Error, HttpServer};
 
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use actix_web_httpauth::middleware::HttpAuthentication;
 use serde::Deserialize;
 
-use actix_web_grants::proc_macro::{has_any_role, has_permissions};
-// Used for integration with `actix-web-httpauth`
 use crate::claim::Claims;
 use actix_cors::Cors;
 use actix_web_grants::permissions::AttachPermissions;
 
 mod claim;
+mod routes;
 
-#[get("/admin")]
-#[has_permissions("OP_GET_SECURED_INFO")]
-async fn permission_secured() -> HttpResponse {
-    HttpResponse::Ok().finish()
-}
-
-#[get("/ping")]
-#[has_any_role("ADMIN", "MANAGER", "USER")]
-async fn user_reserved() -> HttpResponse {
-    HttpResponse::Ok().finish()
-}
-
-#[get("/manager")]
-#[has_any_role("ADMIN", "MANAGER")]
-async fn manager_secured() -> HttpResponse {
-    HttpResponse::Ok().finish()
-}
+use crate::routes::get::*;
 
 async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, Error> {
     let claims = claim::decode_jwt(credentials.token())?;
@@ -52,11 +35,14 @@ async fn main() -> std::io::Result<()> {
             ])
             .max_age(3600);
 
-        App::new().wrap(cors).service(create_token).service(
+        App::new()
+        .wrap(cors)
+        .service(create_token)
+        .service(
             web::scope("/api")
                 .wrap(auth)
                 .service(permission_secured)
-                .service(manager_secured)
+                .service(permission_secured)
                 .service(user_reserved),
         )
     })

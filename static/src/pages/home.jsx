@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
+import {useNavigationType } from 'react-router-dom';
+
 
 const Home = () => {
+  console.log(useNavigationType());
 
   return (
     <div class="container">

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie"
-import {useNavigate, Routes, Route, Navigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
-const AccountCreation = () => {
+export default function AccountCreation({ onHandleRefresh }) {
 
     const [name, SetName] = useState("");
     const [password, SetPassword] = useState("");
@@ -23,6 +23,9 @@ const AccountCreation = () => {
     const handleChangePasswordRepeat = (e) => {
         SetPasswordRepeat(e.target.value);
     }
+    const handleRefresh = (bool) => {
+        onHandleRefresh(bool)
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -37,7 +40,7 @@ const AccountCreation = () => {
             return false;
         }
 
-        axios.post("http://localhost:8081/token", {
+        axios.post("http://localhost:8081/register", {
             "username": name,
             "password": password
         }).then(response => {
@@ -48,7 +51,8 @@ const AccountCreation = () => {
                 secure: true
             })
             SetRedirect(true);
-           
+            handleRefresh(true);
+
         }).catch(error => {
             console.log(error);
         })
@@ -59,10 +63,7 @@ const AccountCreation = () => {
 
         <>
             {redirect &&
-            navigate("/", {replace:true})
-            // <Routes>
-            //     <Route path="*" element={<Navigate replace to="/" reload={true}/>}/>
-            // </Routes>
+                navigate("/", { replace: true })
             }
 
             <div className="container">
@@ -85,8 +86,8 @@ const AccountCreation = () => {
                     <p className="text-error">{error}</p>
                 </div>
             </div>
-        </>
+         </>
     )
 }
 
-export default <AccountCreation />
+// export default <AccountCreation />

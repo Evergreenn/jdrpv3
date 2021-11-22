@@ -11,6 +11,7 @@ The goal is to provide tools and quality of life for all board RPG
 - [sqlite](https://github.com/sqlite/sqlite) database
 - [ws_rs](https://github.com/housleyjk/ws-rs) web socket communication
 - [actix](https://actix.rs/) web framework
-- [diesel](http://diesel.rs/) ORM
+<!-- - [diesel](http://diesel.rs/) ORM -->
+- [refinery-cli](https://github.com/rust-db/refinery/tree/main/refinery_cli) migration tool 
 - [Inferno](https://www.infernojs.org/) react on steroids lib
 - [chota](https://jenil.github.io/chota/) micro css framework

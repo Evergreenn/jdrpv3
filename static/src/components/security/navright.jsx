@@ -1,4 +1,4 @@
-import React, { useState, useEffect, render } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
 import Cookies from "universal-cookie"
 
@@ -47,13 +47,13 @@ const NavRight = () => {
                             &nbsp;
                         </summary>
                         
-                        <div className="card">
+                        <div className="card card-drop">
                             <a onClick={handleClick} href="">Account</a>
                             <hr />
                             <a onClick={logout} href="" >Logout</a>
                         </div>
                     </details>
-                    <span id="caret" style={{position:"absolute", right: "3%"}}>▼</span>
+                    <span id="caret">▼</span>
                 </a >
                 
                 </>

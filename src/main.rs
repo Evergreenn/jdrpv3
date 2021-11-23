@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate dotenv_codegen;
+
 use actix_web::dev::ServiceRequest;
 use actix_web::{http, web, App, Error, HttpServer};
 
@@ -48,7 +51,7 @@ async fn main() -> std::io::Result<()> {
                 .service(user_reserved),
         )
     })
-    .bind("127.0.0.1:8081")?
+    .bind(dotenv!("API_URL"))?
     .workers(1)
     .run()
     .await

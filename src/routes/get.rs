@@ -7,8 +7,8 @@ async fn permission_secured() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-#[get("/ping")]
 #[has_any_role("ADMIN", "MANAGER", "USER")]
+#[get("/ping")]
 async fn user_reserved() -> HttpResponse {
     HttpResponse::Ok().finish()
 }

@@ -7,6 +7,7 @@ import * as serviceWorker from './serviceWorker';
 // import "../node_modules/materialize-css/dist/css/materialize.css";
 // M.AutoInit();
 
+require("dotenv").config();
 ReactDOM.render(<React.StrictMode><App /></React.StrictMode>, document.getElementById('root'));
 
 

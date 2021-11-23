@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
 import Cookies from "universal-cookie"
 import { useNavigate } from 'react-router-dom';
-
+import Loader from "../UI/loader";
 
 const NavRight = ({ authenticated, onHandleLogout }) => {
 
-    const [username, SetUsername] = useState("Username");
-    const cookies = new Cookies();
+    const [username, SetUsername] = useState("U");
+    const [loaded, SetLoaded] = useState(false);
 
-    let navigate = useNavigate()
+    const cookies = new Cookies();
+    let navigate = useNavigate();
 
     const handleClick = e => {
         e.preventDefault();
@@ -23,6 +24,7 @@ const NavRight = ({ authenticated, onHandleLogout }) => {
             SetUsername(firstLetter);
         }
 
+        SetLoaded(true);
     }, []);
 
     const logout = e => {
@@ -31,6 +33,10 @@ const NavRight = ({ authenticated, onHandleLogout }) => {
         onHandleLogout(false);
         navigate("/", { replace: true })
 
+    }
+
+    if (false == loaded) {
+        <Loader />
     }
 
     return (

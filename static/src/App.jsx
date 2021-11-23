@@ -9,10 +9,12 @@ import DarkMode from './components/UI/darkmode';
 import Cookies from 'universal-cookie';
 import PageApp from './pages/private/pageapp';
 import Account from './pages/private/account';
+import Loader from './components/UI/loader';
 
 const App = () => {
 
   const [authenticated, SetAuthenticated] = useState(false);
+  const [loaded, SetLoaded] = useState(false);
 
   //add spinner
 
@@ -32,7 +34,12 @@ const App = () => {
 
   useEffect(() => {
     checkIfLogged();
+    SetLoaded(true);
   }, []);
+
+  if (false == loaded) {
+    <Loader />
+}
 
   return (
     <>

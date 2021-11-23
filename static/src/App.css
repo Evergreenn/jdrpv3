@@ -51,6 +51,6 @@
 }
 
 #caret {
-  position: fixed;
+  position: absolute;
   right: 40px;
 }

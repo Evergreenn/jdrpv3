@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
 import Cookies from "universal-cookie"
+import { useNavigate } from 'react-router-dom';
+
 
 const NavRight = ({ authenticated, onHandleLogout }) => {
 
     const [username, SetUsername] = useState("Username");
     const cookies = new Cookies();
+
+    let navigate = useNavigate()
 
     const handleClick = e => {
         e.preventDefault();
@@ -25,6 +29,8 @@ const NavRight = ({ authenticated, onHandleLogout }) => {
         handleClick(e);
         cookies.remove("token");
         onHandleLogout(false);
+        navigate("/", { replace: true })
+
     }
 
     return (
@@ -46,7 +52,7 @@ const NavRight = ({ authenticated, onHandleLogout }) => {
                             </summary>
 
                             <div className="card card-drop">
-                                <a onClick={handleClick} href="">Account</a>
+                                <NavLink to='/account'>Account</NavLink>
                                 <hr />
                                 <a onClick={logout} href="" >Logout</a>
                             </div>

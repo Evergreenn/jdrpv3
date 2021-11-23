@@ -7,6 +7,9 @@ import AccountCreation from './pages/accountcreation';
 import NavRight from './components/security/navright';
 import DarkMode from './components/UI/darkmode';
 import Cookies from 'universal-cookie';
+import PageApp from './pages/private/pageapp';
+import Account from './pages/private/account';
+
 const App = () => {
 
   const [authenticated, SetAuthenticated] = useState(false);
@@ -23,7 +26,8 @@ const App = () => {
   }
 
   const handleRefresh = bool => {
-      SetAuthenticated(bool);
+    SetAuthenticated(bool);
+    console.log(authenticated)
   }
 
   useEffect(() => {
@@ -39,6 +43,9 @@ const App = () => {
             <div className="tabs">
               <NavLink activeclassname='active' to='/'><a>Home</a></NavLink>
               <NavLink activeclassname='active' to='/about'><a>About</a></NavLink>
+              {authenticated &&
+                <NavLink activeclassname='active' to='/app'><a>App</a></NavLink>
+              }
             </div>
           </div>
           <div className="nav-right">
@@ -52,6 +59,12 @@ const App = () => {
           <Route path="/about" element={About} />
           <Route path="/login" element={<Login onHandleRefresh={handleRefresh} />} />
           <Route path="/create-account" element={<AccountCreation onHandleRefresh={handleRefresh} />} />
+          {authenticated &&
+            <>
+              <Route path="/app" element={<PageApp authenticated={authenticated} />} />
+              <Route path="/account" element={<Account authenticated={authenticated} />} />
+            </>
+          }
         </Routes>
 
       </BrowserRouter>

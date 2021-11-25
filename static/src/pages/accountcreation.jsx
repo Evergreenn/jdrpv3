@@ -71,7 +71,7 @@ export default function AccountCreation({ onHandleRefresh }) {
 
                     <form onSubmit={handleSubmit}>
                         <label>
-                            Nom :
+                            Username :
                             <input type="text" value={name} onChange={handleChangeName} /> </label>
                         <label>
                             Password :
@@ -79,7 +79,7 @@ export default function AccountCreation({ onHandleRefresh }) {
                         <label>
                             Repeat Password :
                             <input type="password" value={passwordrepeat} onChange={handleChangePasswordRepeat} /> </label>
-                        <input className="pull-right" type="submit" value="Envoyer" />
+                        <input className="pull-right" type="submit" value="Submit" />
                     </form>
                 </div>
                 <div className="is-center row">

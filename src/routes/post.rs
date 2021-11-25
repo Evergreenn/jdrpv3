@@ -1,14 +1,30 @@
-use actix_web::{post, web, Error, HttpResponse};
-use serde::Deserialize;
+use actix_web::{post, web, Error, Responder};
+use serde::{Deserialize, Serialize};
 use crate::claim::*;
 use crate::repository::manage::*;
 use crate::security::password_manager::*;
+use std::process::Command;
+use crate::ws::ws;
+use actix_web_grants::proc_macro::{has_any_role};
 // use std::error::Error;
 
 #[derive(Deserialize)]
 pub struct UserInput {
     pub username: String,
     pub password: String,
+}
+
+
+#[derive(Deserialize)]
+pub struct UserInputGame {
+    pub gamename: String,
+    pub password: String,
+    pub have_custom_rules: bool,
+}
+
+#[derive(Serialize)]
+pub struct WebSocketAddress {
+    ws_address: String
 }
 
 // #[derive(Debug)]
@@ -76,3 +92,31 @@ pub async fn login(info: web::Json<UserInput>) -> Result<String, Error>{
 
 }
 
+
+#[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/create-game")]
+pub async fn create_game(info: web::Json<UserInputGame>) -> impl Responder {
+    let _game_info = info.into_inner();
+
+    //TODO: check values from input
+    
+    //TODO: get available socket address 
+
+    //TODO: start process with game parameters
+    let sock = ws::get_free_socket_address();
+    let cmd_args = format!("-w{}", sock);
+    println!("{:#?}", sock);
+    println!("{:#?}", cmd_args);
+
+    let _output = Command::new(dotenv!("WS_BINARY_PATH"))
+    .arg(cmd_args)
+    .spawn()
+    .unwrap();
+    // .expect("failed to load socket");
+
+    // println!("{:#?}", output);
+    
+    web::Json(WebSocketAddress{ws_address:sock})
+
+    // Ok("oui".to_string())
+}

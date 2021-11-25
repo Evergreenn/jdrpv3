@@ -14,6 +14,7 @@ mod claim;
 mod routes;
 mod repository;
 mod security;
+mod ws;
 
 use crate::routes::get::*;
 use crate::routes::post::*;
@@ -48,7 +49,8 @@ async fn main() -> std::io::Result<()> {
                 .wrap(auth)
                 .service(permission_secured)
                 .service(permission_secured)
-                .service(user_reserved),
+                .service(user_reserved)
+                .service(create_game)
         )
     })
     .bind(dotenv!("API_URL"))?

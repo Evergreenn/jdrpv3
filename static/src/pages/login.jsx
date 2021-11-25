@@ -60,12 +60,12 @@ export default function Login({ onHandleRefresh }) {
 
                     <form onSubmit={handleSubmit}>
                         <label>
-                            Nom :
+                            Username :
                             <input type="text" value={name} onChange={handleChangeName} /> </label>
                         <label>
                             Password :
                             <input type="password" value={password} onChange={handleChangePassword} /> </label>
-                        <input className="pull-right" type="submit" value="Envoyer" />
+                        <input className="pull-right" type="submit" value="Submit" />
                     </form>
                 </div>
                 <div className="is-center row">

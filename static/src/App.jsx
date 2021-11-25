@@ -10,6 +10,7 @@ import Cookies from 'universal-cookie';
 import PageApp from './pages/private/pageapp';
 import Account from './pages/private/account';
 import Loader from './components/UI/loader';
+import GameCreator from './pages/private/creategame';
 
 const App = () => {
 
@@ -70,10 +71,11 @@ const App = () => {
             <>
               <Route path="/app" element={<PageApp authenticated={authenticated} />} />
               <Route path="/account" element={<Account authenticated={authenticated} />} />
+              <Route exact path="/game-creation" element={<GameCreator authenticated={authenticated}/>} />
+              <Route exact path="/game" element={<GameCreator authenticated={authenticated}/>} />
             </>
           }
         </Routes>
-
       </BrowserRouter>
     </>
 

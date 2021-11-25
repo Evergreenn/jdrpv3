@@ -40,7 +40,7 @@ export default function AccountCreation({ onHandleRefresh }) {
             return false;
         }
 
-        axios.post(process.env.REACT_APP_BASE_UR+"register", {
+        axios.post(process.env.REACT_APP_BASE_URL+"register", {
             "username": name,
             "password": password
         }).then(response => {

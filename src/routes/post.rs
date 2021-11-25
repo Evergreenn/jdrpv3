@@ -108,10 +108,10 @@ pub async fn create_game(info: web::Json<UserInputGame>) -> impl Responder {
     println!("{:#?}", sock);
     println!("{:#?}", cmd_args);
 
-    let _output = Command::new(dotenv!("WS_BINARY_PATH"))
-    .arg(cmd_args)
-    .spawn()
-    .unwrap();
+    // let _output = Command::new(dotenv!("WS_BINARY_PATH"))
+    // .arg(cmd_args)
+    // .spawn()
+    // .unwrap();
     // .expect("failed to load socket");
 
     // println!("{:#?}", output);

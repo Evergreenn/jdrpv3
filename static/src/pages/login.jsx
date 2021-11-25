@@ -30,7 +30,7 @@ export default function Login({ onHandleRefresh }) {
             return false;
         }
 
-        axios.post(process.env.REACT_APP_BASE_UR+"login", {
+        axios.post(process.env.REACT_APP_BASE_URL+"login", {
             "username": name,
             "password": password
         }).then(response => {

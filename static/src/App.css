@@ -5,7 +5,8 @@
 :root {
   --bg-color: #ffffff;
   --bg-secondary-color: #f3f3f6;
-  --color-primary: #14854F;
+  /* --color-primary: #14854F; */
+  --color-primary: #2196f3;
   /* --color-lightGrey: #d2d6dd; */
   --color-lightGrey: #bdc3c7;
   /* --color-grey: #747681; */
@@ -27,7 +28,7 @@
 .avatar-circle {
   width: 40px;
   height: 40px;
-  background-color: #2c3e50;
+  background-color:  var(--color-primary);
   text-align: center;
   border-radius: 50%;
   -webkit-border-radius: 50%;
@@ -67,8 +68,8 @@
   height: 44px;
   margin: 10px;
   border-radius: 50%;
-  border: 3px solid #14854F;
-  border-color: #14854F transparent #14854F transparent;
+  border: 3px solid var(--color-primary);
+  border-color: var(--color-primary) transparent var(--color-primary) transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 @keyframes lds-dual-ring {
@@ -104,8 +105,8 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: .1s;
+  transition: .1s;
 }
 
 .slider:before {
@@ -116,16 +117,16 @@
   left: 4px;
   bottom: 2px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: .1s;
+  transition: .1s;
 }
 
 input:checked + .slider {
-  background-color: #14854F;
+  background-color: var(--color-primary);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #14854F;
+  box-shadow: 0 0 1px var(--color-primary);
 }
 
 input:checked + .slider:before {

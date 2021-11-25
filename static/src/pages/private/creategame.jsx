@@ -1,44 +1,30 @@
 import React, { useState } from "react";
-import axios from "axios";
-import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
+import useApiPost from "../../components/ApiCrawler/post";
 
 export default function GameCreator({ authenticated }) {
 
     const [name, SetName] = useState(null);
     const [password, SetPassword] = useState(null);
     const [customRules, SetCustomRules] = useState(false);
+    const [customGameRules, setCustomGameRules] = useState({});
     const [socketAddress, SetSocketAddress] = useState("");
     const [error, SetError] = useState("");
+    const { postData } = useApiPost();
 
-    const cookies = new Cookies();
     const navigate = useNavigate();
 
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
 
-        const token = cookies.get("token");
-
-        axios.post(process.env.REACT_APP_BASE_UR+"api/create-game", {
+        const response = await postData("api/create-game", {
             "gamename": name,
             "password": password,
             "have_custom_rules": customRules
-        },{
-            headers:{
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => {
-            // console.log(response.data)
-            SetSocketAddress(response.data.ws_address);
-            navigate("/game", { replace: true, state:response.data.ws_address })
+        });
 
-        }).catch(error => {
-            if([403, 401].includes(error.response.status)){
-                SetError("You don't have the right to do that")
-            }
-            console.log(error);
-        })
+        SetSocketAddress(response.success.ws_address)
 
     }
 
@@ -52,6 +38,15 @@ export default function GameCreator({ authenticated }) {
 
     const handleChangeCustomRules = e => {
         SetCustomRules(e.target.checked)
+    }
+
+    const handleCustomRules = e => {
+
+        const toto = e.target.name;
+        setCustomGameRules({
+            [toto]: `${e.target.checked}`
+        });
+        console.log(customGameRules);
     }
 
     return (
@@ -70,18 +65,63 @@ export default function GameCreator({ authenticated }) {
                                 <label>
                                     Game Password :
                                     <input type="password" autoComplete="off" value={password} onChange={handleChangePassword} /> </label>
-                                <div className="">
-                                    <label className="">
+                                <div>
+                                    <label>
                                         Custom Rules
                                         <span class="switch pull-right">
-                                            <input type="checkbox"  onChange={handleChangeCustomRules} />
+                                            <input type="checkbox" onChange={handleChangeCustomRules} />
                                             <span class="slider round"></span>
                                         </span>
                                     </label>
                                 </div>
-                                {customRules && 
-                                    <p>TODO</p>
-                                    
+                                {customRules &&
+                                    <>
+                                        <div>
+                                            <label>
+                                            Automated combat calculator
+                                                <span class="switch pull-right">
+                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <span class="slider round"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                Generated items
+                                                <span class="switch pull-right">
+                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <span class="slider round"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                Generated monsters
+                                                <span class="switch pull-right">
+                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <span class="slider round"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                Generated classes
+                                                <span class="switch pull-right">
+                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <span class="slider round"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                Generated races
+                                                <span class="switch pull-right">
+                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <span class="slider round"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </>
                                 }
                                 <input className="pull-right" type="submit" value="Submit" />
                             </form>
@@ -93,7 +133,7 @@ export default function GameCreator({ authenticated }) {
                 </div>
             }
 
-            {authenticated && socketAddress && 
+            {authenticated && socketAddress &&
                 <p>{socketAddress}</p>
             }
         </>

@@ -1,10 +1,13 @@
-import React from "react";
+import React, { render } from "react";
 
 const Loader = () => {
-
     return (
-        <div className="lds-dual-ring"></div>
+
+        <div className="centered">
+            <div className="lds-dual-ring"></div>
+        </div>
+
     )
 }
 
-export default <Loader /> 
+export default Loader

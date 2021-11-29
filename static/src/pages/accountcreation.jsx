@@ -45,10 +45,13 @@ export default function AccountCreation({ onHandleRefresh }) {
             "password": password
         }).then(response => {
             const cookies = new Cookies();
-
+            const date = new Date().getTime();
+            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date/1000));
             cookies.set("token", response.data, {
                 sameSite: "lax",
-                secure: true
+                secure: true,
+                maxAge: maxAge,
+
             })
             SetRedirect(true);
             handleRefresh(true);

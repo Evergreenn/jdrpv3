@@ -12,3 +12,27 @@ services:
       - 3306
     environment:
       MYSQL_ROOT_PASSWORD: root
+
+  api_redis:  
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - work
+  api_redis-commander:
+    container_name: apiStat_redis-commander
+    image: rediscommander/redis-commander:latest
+    depends_on:
+      - api_redis
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:api_redis:6379
+    ports:
+      - 9081:8081
+    networks:
+      - work
+
+
+networks:
+  work:
+    external: true

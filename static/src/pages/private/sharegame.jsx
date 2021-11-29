@@ -1,27 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
 import Loader from "../../components/UI/loader";
+import { useParams } from "react-router-dom";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useNavigate } from 'react-router-dom';
 import WebSocketStatus from "../../components/UI/websocketsatuts";
-import Cookies from "universal-cookie"
 
 
-export default function Game() {
+export default function ShareGame() {
 
     const { args } = useParams();
-    const [messageHistory, setMessageHistory] = useState([]);
-    const [adminMessageHistory, setadminMessageHistory] = useState([]);
     const ws = atob(args);
     const socketUrl = `ws://${ws}`;
+    const [messageHistory, setMessageHistory] = useState([]);
+    const [adminMessageHistory, setadminMessageHistory] = useState([]);
     let navigate = useNavigate()
-    const cookies = new Cookies();
-    const token = cookies.get("token");
-
-
-    const queryParams = {
-        'token': token
-      };
 
     const {
         sendMessage,
@@ -29,11 +21,12 @@ export default function Game() {
         readyState,
         getWebSocket
     } = useWebSocket(socketUrl, {
-        // onOpen: () => console.log('opened'),
+        // share: true,
+        // onOpen: e => console.log(e),
         onError: (e) => { console.log(e) },
         shouldReconnect: (closeEvent) => true,
-        queryParams:queryParams
-    }, true);
+    });
+
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -44,6 +37,7 @@ export default function Game() {
             }else{
                 setMessageHistory(prev => prev.concat(message.message));
             }
+
         }
     }, [lastMessage, setMessageHistory, setadminMessageHistory]);
 
@@ -55,11 +49,9 @@ export default function Game() {
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
 
-
     const handleOnClick = useCallback(() =>
         sendMessage('Hello'), []
     );
-
     const handleOnClickClose = useCallback(() => {
         getWebSocket().close(1000)
         navigate("/lobby", { replace: true })
@@ -75,23 +67,28 @@ export default function Game() {
                             <div className="col is-center"><p>Trying to reconnect ...</p></div>
                         </div>
                     </div>
-                    <p>{connectionStatus}</p>
                     <Loader />
                 </>
             }
 
             {readyState == ReadyState.OPEN &&
                 <div>
-                    <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
+                    <h1>Slave</h1>
+                    <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} />
+
+                    {/* <span>The WebSocket is currently {connectionStatus}</span><br /> */}
+                    {/* {lastMessage ? <span>Last message: {lastMessage.data}</span> : null} */}
                     <button onClick={handleOnClick}>test</button>
-                    {/* <button onClick={handleOnClickClose}>close</button> */}
+                    <button onClick={handleOnClickClose}>close</button>
+
 
                     <ul>
                         {messageHistory
-                            .map((message, idx) => <p key={idx}>{message ? message : null}</p>)}
+                            .map((message, idx) => <span key={idx}>{message ? message.data : null}</span>)}
                     </ul>
                 </div>
             }
         </>
     )
+
 }

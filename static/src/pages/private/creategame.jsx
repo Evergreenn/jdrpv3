@@ -4,15 +4,23 @@ import useApiPost from "../../components/ApiCrawler/post";
 
 export default function GameCreator({ authenticated }) {
 
+    const defaultValue = {
+        Automated_combat_calculator: false,
+        Generated_items: false,
+        Generated_monsters: false,
+        Generated_classes: false,
+        Generated_races: false,
+    }
+
     const [name, SetName] = useState(null);
     const [password, SetPassword] = useState(null);
     const [customRules, SetCustomRules] = useState(false);
-    const [customGameRules, setCustomGameRules] = useState({});
+    const [customGameRules, setCustomGameRules] = useState(defaultValue);
     const [socketAddress, SetSocketAddress] = useState("");
     const [error, SetError] = useState("");
     const { postData } = useApiPost();
-
     const navigate = useNavigate();
+
 
 
     const handleSubmit = async e => {
@@ -24,7 +32,23 @@ export default function GameCreator({ authenticated }) {
             "have_custom_rules": customRules
         });
 
-        SetSocketAddress(response.success.ws_address)
+        if(response.success == undefined || response.error == undefined){
+            SetError("Something really wrong happened");
+            return false;
+        }
+
+        if(response.error){
+            SetError(response.error);
+        }else{
+
+            const to64 = btoa(response.success.ws_address);
+    
+            navigate({
+              pathname: `/game/${to64}`,
+            //   search: `?args=`,
+            });
+            // SetSocketAddress(response.success.ws_address)
+        }
 
     }
 
@@ -37,15 +61,18 @@ export default function GameCreator({ authenticated }) {
     }
 
     const handleChangeCustomRules = e => {
-        SetCustomRules(e.target.checked)
+        SetCustomRules(e.target.checked);
+        setCustomGameRules(defaultValue);
+
     }
 
     const handleCustomRules = e => {
 
         const toto = e.target.name;
-        setCustomGameRules({
-            [toto]: `${e.target.checked}`
-        });
+
+        customGameRules[toto] =`${e.target.checked}`
+        setCustomGameRules(customGameRules);
+
         console.log(customGameRules);
     }
 
@@ -80,7 +107,7 @@ export default function GameCreator({ authenticated }) {
                                             <label>
                                             Automated combat calculator
                                                 <span class="switch pull-right">
-                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <input type="checkbox" name="Automated_combat_calculator" onChange={handleCustomRules} />
                                                     <span class="slider round"></span>
                                                 </span>
                                             </label>
@@ -89,7 +116,7 @@ export default function GameCreator({ authenticated }) {
                                             <label>
                                                 Generated items
                                                 <span class="switch pull-right">
-                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <input type="checkbox" name="Generated_items" onChange={handleCustomRules} />
                                                     <span class="slider round"></span>
                                                 </span>
                                             </label>
@@ -98,7 +125,7 @@ export default function GameCreator({ authenticated }) {
                                             <label>
                                                 Generated monsters
                                                 <span class="switch pull-right">
-                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <input type="checkbox" name="Generated_monsters" onChange={handleCustomRules} />
                                                     <span class="slider round"></span>
                                                 </span>
                                             </label>
@@ -107,7 +134,7 @@ export default function GameCreator({ authenticated }) {
                                             <label>
                                                 Generated classes
                                                 <span class="switch pull-right">
-                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <input type="checkbox" name="Generated_classes" onChange={handleCustomRules} />
                                                     <span class="slider round"></span>
                                                 </span>
                                             </label>
@@ -116,7 +143,7 @@ export default function GameCreator({ authenticated }) {
                                             <label>
                                                 Generated races
                                                 <span class="switch pull-right">
-                                                    <input type="checkbox" onChange={handleCustomRules} />
+                                                    <input type="checkbox" name="Generated_races" onChange={handleCustomRules} />
                                                     <span class="slider round"></span>
                                                 </span>
                                             </label>

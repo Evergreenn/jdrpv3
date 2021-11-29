@@ -35,11 +35,14 @@ export default function Login({ onHandleRefresh }) {
             "password": password
         }).then(response => {
             const cookies = new Cookies();
-
-            cookies.set("token", response.data, {
+            const date = new Date().getTime();
+            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date/1000));
+            
+            cookies.set("token", response.data.jwt, {
                 sameSite: "lax",
-                secure: true
-            })
+                secure: true,
+                maxAge: maxAge,
+            });
             SetRedirect(true);
             handleRefresh(true);
 

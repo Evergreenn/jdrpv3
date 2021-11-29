@@ -5,10 +5,12 @@ use actix_web::dev::ServiceRequest;
 use actix_web::{http, web, App, Error, HttpServer};
 
 use actix_web_httpauth::extractors::bearer::BearerAuth;
+// use actix_web_httpauth::extractors::{AuthenticationError};
 use actix_web_httpauth::middleware::HttpAuthentication;
 
 use actix_cors::Cors;
 use actix_web_grants::permissions::AttachPermissions;
+use std::env;
 
 mod claim;
 mod routes;
@@ -18,11 +20,18 @@ mod ws;
 
 use crate::routes::get::*;
 use crate::routes::post::*;
+// use crate::routes::error::*;
 
 async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, Error> {
-    let claims = claim::decode_jwt(credentials.token())?;
-    req.attach(claims.permissions);
-    Ok(req)
+    match claim::decode_jwt(credentials.token()){
+        Ok(o) => {
+            req.attach(o.permissions);
+            env::set_var("username", o.username);
+            Ok(req)
+        }
+        Err(e) => {Err(e)}
+        // Err(e) => Err(CustomError::from(String::from("Invalid authentication ")))
+    } 
 }
 
 #[actix_web::main]

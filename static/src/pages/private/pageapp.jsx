@@ -36,7 +36,9 @@ export default function PageApp({ authenticated }) {
                             <div className="card">
                                 <div className="row">
                                     <div className="col  is-center">
-                                        <a className="button primary">Join a game</a>
+                                    <NavLink activeclassname='active' to='/lobby'>
+                                            <a className="button primary">Join a game</a>
+                                        </NavLink>
                                     </div>
                                     <div className="col">
                                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam a diam lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed sem felis, interdum sed accumsan sit amet, auctor ac sapien. Suspendisse non arcu eget elit porttitor malesuada. Cras dolor sem, mollis sit amet ipsum at, vestibulum suscipit quam. Nulla eu suscipit libero. Mauris vitae tempor purus. Nam facilisis fringilla nisl vel malesuada.  </p>

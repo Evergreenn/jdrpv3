@@ -10,22 +10,32 @@ const useApiPost = () => {
         headers: { Authorization: `Bearer ${token}` }
     });
 
-    const postData = async (path, args) => {
-       return await api.post(path, args)
-            .then(response => {
-                let error, success;
-                if (response.ok) {
-                    success = response.data
-                } else {
-                    if ([403, 401].includes(response.status)) {
-                        error = "You don't have access to this resource"
+    try{
+        const postData = async (path, args) => {
+           return await api.post(path, args)
+                .then(response => {
+                    let error = false;
+                    let success = false;
+                    if (response.ok) {
+                        success = response.data
+                    } else {
+                        if ([403, 401].includes(response.status)) {
+                            error = "You don't have access to this resource"
+                        }
+
+                        if (response.problem) {
+                            error = response.problem
+                        }
                     }
-                }
-                return { success: success, error: error }
-            })
+                    return { success: success, error: error }
+                })
+        }
+        return { postData }
+
+    }catch (error) {
+        return { success: null, error: "Can't connect to backend" }
     }
 
-    return { postData }
 
 }
 

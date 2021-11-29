@@ -5,7 +5,7 @@ use jsonwebtoken::{self, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 
 // Token lifetime and Secret key are hardcoded for clarity
-const JWT_EXPIRATION_HOURS: i64 = 24;
+// const JWT_EXPIRATION_HOURS: i64 = 24;
 const SECRET: &str = "SECRET";
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -20,7 +20,7 @@ impl Claims {
         Self {
             username,
             permissions,
-            exp: (Utc::now() + Duration::hours(JWT_EXPIRATION_HOURS)).timestamp(),
+            exp: (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp(),
         }
     }
 }

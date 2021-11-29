@@ -11,6 +11,9 @@ import PageApp from './pages/private/pageapp';
 import Account from './pages/private/account';
 import Loader from './components/UI/loader';
 import GameCreator from './pages/private/creategame';
+import Game from './pages/private/game';
+import ShareGame from './pages/private/sharegame';
+import Lobby from './pages/private/loby';
 
 const App = () => {
 
@@ -40,7 +43,7 @@ const App = () => {
 
   if (false == loaded) {
     <Loader />
-}
+  }
 
   return (
     <>
@@ -71,8 +74,10 @@ const App = () => {
             <>
               <Route path="/app" element={<PageApp authenticated={authenticated} />} />
               <Route path="/account" element={<Account authenticated={authenticated} />} />
-              <Route exact path="/game-creation" element={<GameCreator authenticated={authenticated}/>} />
-              <Route exact path="/game" element={<GameCreator authenticated={authenticated}/>} />
+              <Route exact path="/game-creation" element={<GameCreator authenticated={authenticated} />} />
+              <Route exact path="/game/:args" element={<Game />} />
+              <Route exact path="/lobby" element={<Lobby authenticated={authenticated}/>} />
+              <Route exact path="/share-game/:args" element={<ShareGame />} />
             </>
           }
         </Routes>

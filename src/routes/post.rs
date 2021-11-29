@@ -1,4 +1,4 @@
-use actix_web::{post, web, Error, Responder};
+use actix_web::{post, web, Error, Responder, HttpResponse};
 use serde::{Deserialize, Serialize};
 use crate::claim::*;
 use crate::repository::manage::*;
@@ -6,12 +6,27 @@ use crate::security::password_manager::*;
 use std::process::Command;
 use crate::ws::ws;
 use actix_web_grants::proc_macro::{has_any_role};
+use chrono::{Duration, Utc};
+use std::env;
+use actix_web_httpauth::extractors::bearer::BearerAuth;
+
 // use std::error::Error;
 
 #[derive(Deserialize)]
 pub struct UserInput {
     pub username: String,
     pub password: String,
+}
+
+#[derive(Serialize)]
+pub struct LoginResult {
+    pub jwt: String,
+    pub expiration_time: i64,
+}
+
+#[derive(Serialize)]
+pub struct ErrorResult {
+    pub message: String,
 }
 
 
@@ -47,7 +62,7 @@ pub struct WebSocketAddress {
 // impl error::ResponseError for AuthError {}
 
 #[post("/register")]
-pub async fn create_token(info: web::Json<UserInput>) -> Result<String, Error> {
+pub async fn create_token(info: web::Json<UserInput>) -> Result<HttpResponse, Error> {
     let user_info = info.into_inner();
     let pass_h = hash_password(&user_info.password);
     let user_permissions = vec!["OP_GET_SECURED_INFO".to_string(), "ROLE_USER".to_string()];
@@ -56,13 +71,18 @@ pub async fn create_token(info: web::Json<UserInput>) -> Result<String, Error> {
 
     let claims = Claims::new(user_info.username, user_permissions);
     let jwt = create_jwt(claims)?;
+    let expiration_time = (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp();
 
-    Ok(jwt)
+
+    Ok(HttpResponse::Ok().json(LoginResult {
+        jwt,
+        expiration_time
+    }))
 }
 
 
 #[post("/login")]
-pub async fn login(info: web::Json<UserInput>) -> Result<String, Error>{
+pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error>{
     let user_info = info.into_inner();
     // let pass_h = hash_password(&user_info.password);
     
@@ -82,11 +102,18 @@ pub async fn login(info: web::Json<UserInput>) -> Result<String, Error>{
             let user_permissions = vec!["OP_GET_SECURED_INFO".to_string(), "ROLE_USER".to_string()];
         
             let claims = Claims::new(user_info.username, user_permissions);
-            let jwt = create_jwt(claims)?;
-            Ok(jwt)
+            let jwt = create_jwt(claims)?;            
+            let expiration_time = (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp();
+
+            Ok(HttpResponse::Ok().json(LoginResult {
+                jwt,
+                expiration_time
+            }))
         }
         false => {
-            Ok("wrong password".to_string())
+            Ok(HttpResponse::Unauthorized().json(ErrorResult {
+                message: String::from("Wrong Password")
+            }))
         }
     }
 
@@ -95,7 +122,7 @@ pub async fn login(info: web::Json<UserInput>) -> Result<String, Error>{
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/create-game")]
-pub async fn create_game(info: web::Json<UserInputGame>) -> impl Responder {
+pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth) -> impl Responder {
     let _game_info = info.into_inner();
 
     //TODO: check values from input
@@ -105,13 +132,16 @@ pub async fn create_game(info: web::Json<UserInputGame>) -> impl Responder {
     //TODO: start process with game parameters
     let sock = ws::get_free_socket_address();
     let cmd_args = format!("-w{}", sock);
+    let cmd_arg = format!("-t{}", credentials.token());
     println!("{:#?}", sock);
     println!("{:#?}", cmd_args);
+    println!("{:#?}", dotenv!("WS_BINARY_PATH"));
 
-    // let _output = Command::new(dotenv!("WS_BINARY_PATH"))
-    // .arg(cmd_args)
-    // .spawn()
-    // .unwrap();
+    let _output = Command::new(dotenv!("WS_BINARY_PATH"))
+    .arg(cmd_args)
+    .arg(cmd_arg)
+    .spawn()
+    .unwrap();
     // .expect("failed to load socket");
 
     // println!("{:#?}", output);

@@ -17,12 +17,11 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
     }
 
     return (
-
         <>
             <div className="container">
                 <div className="row">
-                    <div className="col-8"></div>
-                    <div className="col-4">
+                    {/* <div className="col-8"></div> */}
+                    <div className="col">
                         <div className="card">
                             <p>The WebSocket is currently: {wsState}</p>
                             <button onClick={onHandleOnClickClose}>close</button>

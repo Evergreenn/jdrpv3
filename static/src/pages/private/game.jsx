@@ -12,16 +12,16 @@ export default function Game() {
     const { args } = useParams();
     const [messageHistory, setMessageHistory] = useState([]);
     const [adminMessageHistory, setadminMessageHistory] = useState([]);
+    const [notifications, setNotifications] = useState(0);
     const ws = atob(args);
     const socketUrl = `ws://${ws}`;
     let navigate = useNavigate()
     const cookies = new Cookies();
     const token = cookies.get("token");
 
-
     const queryParams = {
         'token': token
-      };
+    };
 
     const {
         sendMessage,
@@ -32,16 +32,17 @@ export default function Game() {
         // onOpen: () => console.log('opened'),
         onError: (e) => { console.log(e) },
         shouldReconnect: (closeEvent) => true,
-        queryParams:queryParams
+        queryParams: queryParams
     }, true);
 
     useEffect(() => {
         if (lastMessage !== null) {
             let message = JSON.parse(lastMessage.data);
 
-            if(message.from == "Admin"){
+            if (message.from == "Admin") {
                 setadminMessageHistory(prev => prev.concat(message.message));
-            }else{
+                setNotifications(notifications => notifications + 1 );
+            } else {
                 setMessageHistory(prev => prev.concat(message.message));
             }
         }
@@ -59,6 +60,12 @@ export default function Game() {
     const handleOnClick = useCallback(() =>
         sendMessage('Hello'), []
     );
+
+    const handledisplayClick = e => {
+        e.preventDefault();
+        document.getElementById("clicker").classList.toggle("trigger");
+        setNotifications(0);
+    }
 
     const handleOnClickClose = useCallback(() => {
         getWebSocket().close(1000)
@@ -82,7 +89,19 @@ export default function Game() {
 
             {readyState == ReadyState.OPEN &&
                 <div>
-                    <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
+                    
+                    <button onClick={handledisplayClick} className="button outline dark" id="clicker">Admin panel 
+                    {notifications > 0 && <span className="badge">{notifications}</span>}
+                    </button>
+                    <div className="panel-wrap">
+                        <div className="panel">
+                            <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
+                        </div>
+                    </div>
+
+                    <br />
+
+
                     <button onClick={handleOnClick}>test</button>
                     {/* <button onClick={handleOnClickClose}>close</button> */}
 

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import WebSocketStatus from "../../components/UI/websocketsatuts";
 import Cookies from "universal-cookie"
 
-
 export default function Game() {
 
     const { args } = useParams();
@@ -42,7 +41,7 @@ export default function Game() {
             if (message.from == "Admin") {
                 message.date = new Date(message.date).toISOString().substr(11, 8)
                 setadminMessageHistory(prev => prev.concat(message));
-                setNotifications(notifications => notifications + 1 );
+                setNotifications(notifications => notifications + 1);
             } else {
                 setMessageHistory(prev => prev.concat(message.message));
             }
@@ -71,47 +70,37 @@ export default function Game() {
     const handleOnClickClose = useCallback(() => {
         getWebSocket().close(1000)
         navigate("/lobby", { replace: true })
-
     }, []);
 
     return (
         <>
-            {readyState != ReadyState.OPEN &&
-                <>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col is-center"><p>Trying to reconnect ...</p></div>
-                        </div>
-                    </div>
-                    <p>{connectionStatus}</p>
-                    <Loader />
-                </>
-            }
+            <div>
 
-            {readyState == ReadyState.OPEN &&
-                <div>
-                    
-                    <button onClick={handledisplayClick} className="button outline dark" id="clicker">Admin panel 
+                <button onClick={handledisplayClick} className="button outline dark" id="clicker">Admin panel
                     {notifications > 0 && <span className="badge">{notifications}</span>}
-                    </button>
-                    <div className="panel-wrap">
-                        <div className="panel">
-                            <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
-                        </div>
+                </button>
+                <div className="panel-wrap">
+                    <div className="panel">
+                        <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
                     </div>
+                </div>
 
-                    <br />
+                <br />
 
+                <button onClick={handleOnClick}>test</button>
 
-                    <button onClick={handleOnClick}>test</button>
-                    {/* <button onClick={handleOnClickClose}>close</button> */}
+                {readyState != ReadyState.OPEN &&
+                    <Loader />
+                }
+
+                {readyState == ReadyState.OPEN &&
 
                     <ul>
                         {messageHistory
                             .map((message, idx) => <p key={idx}>{message ? message : null}</p>)}
                     </ul>
-                </div>
-            }
+                }
+            </div>
         </>
     )
 }

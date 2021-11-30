@@ -39,6 +39,7 @@ export default function Game() {
             let message = JSON.parse(lastMessage.data);
 
             if (message.from == "Admin") {
+                console.log(message)
                 message.date = new Date(message.date).toISOString().substr(11, 8)
                 setadminMessageHistory(prev => prev.concat(message));
                 setNotifications(notifications => notifications + 1);
@@ -69,20 +70,25 @@ export default function Game() {
 
     const handleOnClickClose = useCallback(() => {
         getWebSocket().close(1000)
-        navigate("/lobby", { replace: true })
+        navigate("/app", { replace: true })
     }, []);
 
     return (
         <>
             <div>
+                <div className="navigation-right">
+                    <a onClick={handledisplayClick} className="button outline dark" id="clicker">Admin panel
+                        {notifications > 0 && <span className="badge">{notifications}</span>}
+                    </a>
 
-                <button onClick={handledisplayClick} className="button outline dark" id="clicker">Admin panel
-                    {notifications > 0 && <span className="badge">{notifications}</span>}
-                </button>
-                <div className="panel-wrap">
-                    <div className="panel">
-                        <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
+                    <div className="panel-wrap">
+                        <div className="panel">
+                            <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
+                        </div>
                     </div>
+
+                    <a className="button dark outline ">Button#1</a>
+
                 </div>
 
                 <br />

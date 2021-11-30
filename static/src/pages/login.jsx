@@ -8,7 +8,6 @@ export default function Login({ onHandleRefresh }) {
     const [name, SetName] = useState("");
     const [password, SetPassword] = useState("");
     const [error, SetError] = useState("");
-    const [redirect, SetRedirect] = useState(false);
 
     let navigate = useNavigate()
 
@@ -30,20 +29,20 @@ export default function Login({ onHandleRefresh }) {
             return false;
         }
 
-        axios.post(process.env.REACT_APP_BASE_URL+"login", {
+        axios.post(process.env.REACT_APP_BASE_URL + "login", {
             "username": name,
             "password": password
         }).then(response => {
             const cookies = new Cookies();
             const date = new Date().getTime();
-            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date/1000));
-            
+            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date / 1000));
+
             cookies.set("token", response.data.jwt, {
                 sameSite: "lax",
                 secure: true,
                 maxAge: maxAge,
             });
-            SetRedirect(true);
+            navigate("/", { replace: true })
             handleRefresh(true);
 
         }).catch(error => {
@@ -54,10 +53,6 @@ export default function Login({ onHandleRefresh }) {
 
     return (
         <>
-            {redirect &&
-                navigate("/", { replace: true })
-            }
-            <br />
             <div className="container">
                 <div className="is-center row">
 

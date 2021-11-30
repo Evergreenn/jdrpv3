@@ -40,14 +40,14 @@ export default function AccountCreation({ onHandleRefresh }) {
             return false;
         }
 
-        axios.post(process.env.REACT_APP_BASE_URL+"register", {
+        axios.post(process.env.REACT_APP_BASE_URL + "register", {
             "username": name,
             "password": password
         }).then(response => {
             const cookies = new Cookies();
             const date = new Date().getTime();
-            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date/1000));
-            cookies.set("token", response.data, {
+            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date / 1000));
+            cookies.set("token", response.data.jwt, {
                 sameSite: "lax",
                 secure: true,
                 maxAge: maxAge,
@@ -89,7 +89,7 @@ export default function AccountCreation({ onHandleRefresh }) {
                     <p className="text-error">{error}</p>
                 </div>
             </div>
-         </>
+        </>
     )
 }
 

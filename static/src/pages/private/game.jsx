@@ -40,7 +40,8 @@ export default function Game() {
             let message = JSON.parse(lastMessage.data);
 
             if (message.from == "Admin") {
-                setadminMessageHistory(prev => prev.concat(message.message));
+                message.date = new Date(message.date).toISOString().substr(11, 8)
+                setadminMessageHistory(prev => prev.concat(message));
                 setNotifications(notifications => notifications + 1 );
             } else {
                 setMessageHistory(prev => prev.concat(message.message));

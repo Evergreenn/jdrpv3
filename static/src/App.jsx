@@ -33,7 +33,6 @@ const App = () => {
 
   const handleRefresh = bool => {
     SetAuthenticated(bool);
-    console.log(authenticated)
   }
 
   useEffect(() => {
@@ -76,7 +75,7 @@ const App = () => {
               <Route path="/account" element={<Account authenticated={authenticated} />} />
               <Route exact path="/game-creation" element={<GameCreator authenticated={authenticated} />} />
               <Route exact path="/game/:args" element={<Game />} />
-              <Route exact path="/lobby" element={<Lobby authenticated={authenticated}/>} />
+              <Route exact path="/lobby" element={<Lobby authenticated={authenticated} />} />
               <Route exact path="/share-game/:args" element={<ShareGame />} />
             </>
           }

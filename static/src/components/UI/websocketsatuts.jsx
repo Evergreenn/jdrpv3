@@ -19,21 +19,29 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
     return (
         <>
             <div className="container">
-                <div className="row">
-                    {/* <div className="col-8"></div> */}
-                    <div className="col">
-                        <div className="card">
-                            <p>The WebSocket is currently: {wsState}</p>
-                            <button onClick={onHandleOnClickClose}>close</button>
-                            <p>{AdminMessage
-                                .map((message, idx) => <p key={idx}>{message ? message : null}</p>)}
+                <div className="card" >
+                    <div className="row">
+                        <div className="col-8">
+                            <p>The WebSocket is currently:
+                                {wsState === "Open" &&
+                                    <span className="text-primary"> {wsState}</span>
+                                }
+                                {wsState !== "Open" &&
+                                    <span className="text-error"> {wsState}</span>
+                                }
                             </p>
                         </div>
+                        <div className="col-4">
+                            <a className="button outline" onClick={onHandleOnClickClose}>Close Connection</a>
+                        </div>
+                    </div>
+                    <div className="card web">
+                        {AdminMessage
+                            .map((message, idx) => <p key={idx}>{message.date}: {message ? message.message : null}</p>)}
                     </div>
                 </div>
             </div>
         </>
-
     )
 }
 

@@ -47,7 +47,7 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
-        <nav className="nav">
+        <nav id="main-nav" className="nav main-nav">
           <div className="nav-left">
             <a className="brand">Anima Sola</a>
             <div className="tabs">

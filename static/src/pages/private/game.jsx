@@ -5,11 +5,13 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useNavigate } from 'react-router-dom';
 import WebSocketStatus from "../../components/UI/websocketsatuts";
 import Cookies from "universal-cookie"
+import UserView from "./game/userViem";
 
 export default function Game() {
 
     const { args } = useParams();
     const [messageHistory, setMessageHistory] = useState([]);
+    const [isSocketCreator, setIsSocketCreator] = useState(false);
     const [adminMessageHistory, setadminMessageHistory] = useState([]);
     const [notifications, setNotifications] = useState(0);
     const ws = atob(args);
@@ -17,6 +19,7 @@ export default function Game() {
     let navigate = useNavigate()
     const cookies = new Cookies();
     const token = cookies.get("token");
+    const token_decoded = JSON.parse(atob(token.split('.')[1]));
 
     const queryParams = {
         'token': token
@@ -38,13 +41,17 @@ export default function Game() {
         if (lastMessage !== null) {
             let message = JSON.parse(lastMessage.data);
 
-            if (message.from == "Admin") {
-                console.log(message)
-                message.date = new Date(message.date).toISOString().substr(11, 8)
-                setadminMessageHistory(prev => prev.concat(message));
-                setNotifications(notifications => notifications + 1);
+            if (message.is_admin == true) {
+
+                if (message.from === "Console") {
+                    setIsSocketCreator(true);
+                } else {
+                    message.date = new Date(message.date).toISOString().substr(11, 8)
+                    setadminMessageHistory(prev => prev.concat(message));
+                    setNotifications(notifications => notifications + 1);
+                }
             } else {
-                setMessageHistory(prev => prev.concat(message.message));
+                setMessageHistory(prev => prev.concat(message));
             }
         }
     }, [lastMessage, setMessageHistory, setadminMessageHistory]);
@@ -70,6 +77,7 @@ export default function Game() {
 
     const handleOnClickClose = useCallback(() => {
         getWebSocket().close(1000)
+        document.getElementById("main-nav").classList.remove("hide")
         navigate("/app", { replace: true })
     }, []);
 
@@ -77,23 +85,32 @@ export default function Game() {
         <>
             <div>
                 <div className="navigation-right">
-                    <a onClick={handledisplayClick} className="button outline dark" id="clicker">Admin panel
+                    {isSocketCreator &&
+                        <>
+                            <a className="button dark outline ">Button#1</a>
+                            <a className="button dark outline ">Button#1</a>
+                            <a className="button dark outline ">Button#1</a>
+                        </>
+                    }
+                    <a onClick={handledisplayClick} className="button outline dark" id="clicker">⚙️
                         {notifications > 0 && <span className="badge">{notifications}</span>}
                     </a>
-
                     <div className="panel-wrap">
                         <div className="panel">
                             <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
                         </div>
                     </div>
 
-                    <a className="button dark outline ">Button#1</a>
-
                 </div>
 
-                <br />
+                {isSocketCreator &&
+                    <p>admin</p>}
 
-                <button onClick={handleOnClick}>test</button>
+                {/* <button onClick={handleOnClick}>test</button> */}
+
+                {!isSocketCreator &&
+                    <UserView username={token_decoded.username} />
+                }
 
                 {readyState != ReadyState.OPEN &&
                     <Loader />
@@ -103,7 +120,7 @@ export default function Game() {
 
                     <ul>
                         {messageHistory
-                            .map((message, idx) => <p key={idx}>{message ? message : null}</p>)}
+                            .map((message, idx) => <p key={idx}>{message.from}: {message ? message.message : null}</p>)}
                     </ul>
                 }
             </div>

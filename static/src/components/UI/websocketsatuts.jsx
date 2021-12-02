@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import DarkMode from "./darkmode";
+
 
 const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
 
@@ -30,6 +32,9 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
                                     <span className="text-error"> {wsState}</span>
                                 }
                             </p>
+                            <div className="pull-right">
+                                <DarkMode />
+                                </div>
                         </div>
                         <div className="col-4">
                             <a className="button outline" onClick={onHandleOnClickClose}>Close Connection</a>

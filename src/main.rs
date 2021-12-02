@@ -17,6 +17,7 @@ mod routes;
 mod repository;
 mod security;
 mod ws;
+mod generator;
 
 use crate::routes::get::*;
 use crate::routes::post::*;

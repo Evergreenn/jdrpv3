@@ -37,7 +37,7 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
                                 </div>
                         </div>
                         <div className="col-4">
-                            <a className="button outline" onClick={onHandleOnClickClose}>Close Connection</a>
+                            <a className="button outline" onClick={onHandleOnClickClose}> <span className="text-error">Quit Game</span></a>
                         </div>
                     </div>
                     <div className="card web">

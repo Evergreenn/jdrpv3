@@ -14,13 +14,13 @@ export default function GameCreator({ authenticated }) {
 
     const [name, SetName] = useState(null);
     const [password, SetPassword] = useState(null);
+    const [cst, SetCst] = useState(null);
     const [customRules, SetCustomRules] = useState(false);
     const [customGameRules, setCustomGameRules] = useState(defaultValue);
-    const [socketAddress, SetSocketAddress] = useState("");
     const [error, SetError] = useState("");
     const { postData } = useApiPost();
     const navigate = useNavigate();
-
+    const defaultvalue = 'Dd3';
 
 
     const handleSubmit = async e => {
@@ -29,23 +29,24 @@ export default function GameCreator({ authenticated }) {
         const response = await postData("api/create-game", {
             "gamename": name,
             "password": password,
-            "have_custom_rules": customRules
+            "have_custom_rules": customRules,
+            "cst": cst ?? defaultvalue
         });
 
-        if(response.success == undefined || response.error == undefined){
+        if (response.success == undefined || response.error == undefined) {
             SetError("Something really wrong happened");
             return false;
         }
 
-        if(response.error){
+        if (response.error) {
             SetError(response.error);
-        }else{
+        } else {
 
             const to64 = btoa(response.success.ws_address);
-    
+
             navigate({
-              pathname: `/game/${to64}`,
-            //   search: `?args=`,
+                pathname: `/game/${to64}`,
+                //   search: `?args=`,
             });
             // SetSocketAddress(response.success.ws_address)
         }
@@ -60,6 +61,10 @@ export default function GameCreator({ authenticated }) {
         SetPassword(e.target.value);
     }
 
+    const handleChangeCst = e => {
+        SetCst(e.target.value);
+    }
+
     const handleChangeCustomRules = e => {
         SetCustomRules(e.target.checked);
         setCustomGameRules(defaultValue);
@@ -70,7 +75,7 @@ export default function GameCreator({ authenticated }) {
 
         const toto = e.target.name;
 
-        customGameRules[toto] =`${e.target.checked}`
+        customGameRules[toto] = `${e.target.checked}`
         setCustomGameRules(customGameRules);
 
         console.log(customGameRules);
@@ -78,7 +83,7 @@ export default function GameCreator({ authenticated }) {
 
     return (
         <>
-            {authenticated && !socketAddress &&
+            {authenticated &&
                 <div className="container">
                     <div className="row">
                         <div className="col is-center"><h1>Game creation</h1></div>
@@ -92,6 +97,13 @@ export default function GameCreator({ authenticated }) {
                                 <label>
                                     Game Password :
                                     <input type="password" autoComplete="off" value={password} onChange={handleChangePassword} /> </label>
+                                <label>
+                                    Character Sheets Template:
+                                    <select autoComplete="off" defaultValue={defaultvalue} onChange={handleChangeCst}>
+                                        <option selected value={defaultvalue}>D&amp;D 3</option>
+                                        <option value="Dd5">D&amp;D 5</option>
+                                    </select>
+                                </label>
                                 <div>
                                     <label>
                                         Custom Rules
@@ -105,7 +117,7 @@ export default function GameCreator({ authenticated }) {
                                     <>
                                         <div>
                                             <label>
-                                            Automated combat calculator
+                                                Automated combat calculator
                                                 <span class="switch pull-right">
                                                     <input type="checkbox" name="Automated_combat_calculator" onChange={handleCustomRules} />
                                                     <span class="slider round"></span>
@@ -158,10 +170,6 @@ export default function GameCreator({ authenticated }) {
                         </div>
                     </div>
                 </div>
-            }
-
-            {authenticated && socketAddress &&
-                <p>{socketAddress}</p>
             }
         </>
 

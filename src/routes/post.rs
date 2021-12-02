@@ -7,10 +7,7 @@ use std::process::Command;
 use crate::ws::ws;
 use actix_web_grants::proc_macro::{has_any_role};
 use chrono::{Duration, Utc};
-use std::env;
 use actix_web_httpauth::extractors::bearer::BearerAuth;
-
-// use std::error::Error;
 
 #[derive(Deserialize)]
 pub struct UserInput {
@@ -29,12 +26,27 @@ pub struct ErrorResult {
     pub message: String,
 }
 
+#[derive(Deserialize, Debug)]
+pub enum Cst {
+    Dd3,
+    Dd5
+}
 
-#[derive(Deserialize)]
+impl std::fmt::Display for Cst {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match *self {
+            Cst::Dd3 => write!(f, "dd3"),
+            Cst::Dd5 => write!(f, "dd5"),
+        }
+    }
+}
+
+#[derive(Deserialize, Debug)]
 pub struct UserInputGame {
     pub gamename: String,
     pub password: String,
     pub have_custom_rules: bool,
+    pub cst: Cst,
 }
 
 #[derive(Serialize)]
@@ -123,19 +135,19 @@ pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error>{
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/create-game")]
 pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth) -> impl Responder {
-    let _game_info = info.into_inner();
+    let game_info = info.into_inner();
+
+    println!("{:#?}", game_info);
+
 
     //TODO: check values from input
     
-    //TODO: get available socket address 
-
     //TODO: start process with game parameters
     let sock = ws::get_free_socket_address();
     let cmd_args = format!("-w{}", sock);
     let cmd_arg = format!("-t{}", credentials.token());
     println!("{:#?}", sock);
     println!("{:#?}", cmd_args);
-    println!("{:#?}", dotenv!("WS_BINARY_PATH"));
 
     let _output = Command::new(dotenv!("WS_BINARY_PATH"))
     .arg(cmd_args)
@@ -144,9 +156,5 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
     .unwrap();
     // .expect("failed to load socket");
 
-    // println!("{:#?}", output);
-    
     web::Json(WebSocketAddress{ws_address:sock})
-
-    // Ok("oui".to_string())
 }

@@ -6,12 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import WebSocketStatus from "../../components/UI/websocketsatuts";
 import Cookies from "universal-cookie"
 import UserView from "./game/userViem";
+import ToasterAlert from "../../components/UI/toasterAlert";
 
 export default function Game() {
 
     const { args } = useParams();
     const [messageHistory, setMessageHistory] = useState([]);
     const [isSocketCreator, setIsSocketCreator] = useState(false);
+    const [socketError, setSocketError] = useState(false);
     const [adminMessageHistory, setadminMessageHistory] = useState([]);
     const [notifications, setNotifications] = useState(0);
     const ws = atob(args);
@@ -33,7 +35,13 @@ export default function Game() {
     } = useWebSocket(socketUrl, {
         // onOpen: () => console.log('opened'),
         onError: (e) => { console.log(e) },
-        shouldReconnect: (closeEvent) => true,
+        shouldReconnect: (closeEvent) => false,
+        onClose: (e) => {
+
+            //TODO: add a message for letting the user know that the mj closed the game.
+            console.log(e)
+                setSocketError(true)        
+        },
         queryParams: queryParams
     }, true);
 
@@ -55,6 +63,17 @@ export default function Game() {
             }
         }
     }, [lastMessage, setMessageHistory, setadminMessageHistory]);
+
+
+    useEffect(() => {
+
+        if(socketError !== false){
+            window.setTimeout(() => {
+                navigate("/app", { replace: true })
+            }, 3000)
+        }
+
+    }, [socketError])
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -114,6 +133,10 @@ export default function Game() {
 
                 {readyState != ReadyState.OPEN &&
                     <Loader />
+                }
+
+                {socketError &&
+                    <ToasterAlert level="error" message="The MJ close the connection. You are going to be redirected"/>
                 }
 
                 {readyState == ReadyState.OPEN &&

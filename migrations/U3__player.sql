@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS player (
+    player_id VARCHAR(50) PRIMARY KEY,
+    game_id_ VARCHAR(50) NOT NULL,
+    creator_id VARCHAR(50) NOT NULL,
+    player_cs  JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)  ENGINE=INNODB;

@@ -8,6 +8,7 @@ use crate::ws::ws;
 use actix_web_grants::proc_macro::{has_any_role};
 use chrono::{Duration, Utc};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
+use crate::claim::decode_jwt;
 
 #[derive(Deserialize)]
 pub struct UserInput {
@@ -49,10 +50,17 @@ pub struct UserInputGame {
     pub cst: Cst,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct GameDelationmInput {
+    pub game_id: String,
+}
+
 #[derive(Serialize)]
 pub struct WebSocketAddress {
     ws_address: String
 }
+
+
 
 // #[derive(Debug)]
 // pub struct AuthError{
@@ -79,9 +87,9 @@ pub async fn create_token(info: web::Json<UserInput>) -> Result<HttpResponse, Er
     let pass_h = hash_password(&user_info.password);
     let user_permissions = vec!["OP_GET_SECURED_INFO".to_string(), "ROLE_USER".to_string()];
 
-    insert_new_user(&user_info.username, pass_h, (&*user_permissions).to_vec());
+    let user_id = insert_new_user(&user_info.username, pass_h, (&*user_permissions).to_vec()).unwrap();
 
-    let claims = Claims::new(user_info.username, user_permissions);
+    let claims = Claims::new(user_id, user_info.username, user_permissions);
     let jwt = create_jwt(claims)?;
     let expiration_time = (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp();
 
@@ -113,7 +121,7 @@ pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error>{
         true => {
             let user_permissions = vec!["OP_GET_SECURED_INFO".to_string(), "ROLE_USER".to_string()];
         
-            let claims = Claims::new(user_info.username, user_permissions);
+            let claims = Claims::new(user_in_database.user_id.to_string(), user_info.username, user_permissions);
             let jwt = create_jwt(claims)?;            
             let expiration_time = (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp();
 
@@ -138,6 +146,8 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
     let game_info = info.into_inner();
 
     println!("{:#?}", game_info);
+    // println!("{:#?}", dotenv!("WS_BINARY_PATH"));
+
 
 
     //TODO: check values from input
@@ -149,6 +159,12 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
     println!("{:#?}", sock);
     println!("{:#?}", cmd_args);
 
+    let t = decode_jwt(credentials.token()).unwrap();
+
+//TODO: b64 sock
+    insert_new_game(game_info.gamename, game_info.password, t.user_id, game_info.cst, &sock);
+
+
     let _output = Command::new(dotenv!("WS_BINARY_PATH"))
     .arg(cmd_args)
     .arg(cmd_arg)
@@ -158,3 +174,22 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
 
     web::Json(WebSocketAddress{ws_address:sock})
 }
+
+#[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/delete-game")]
+pub async fn delete_game(info: web::Json<GameDelationmInput>, credentials: BearerAuth) -> impl Responder {
+    let game_info = info.into_inner();
+    let t = decode_jwt(credentials.token()).unwrap();
+
+    match is_user_creator_of_game(t.user_id, &game_info.game_id) {
+        Some(_) => {
+            crate::repository::manage::delete_game(&game_info.game_id);
+            web::Json(true)
+        },
+        None => {
+            web::Json(false)
+        }
+    }
+}
+
+//TODO: a function for load the game with the save generated at the socket close event.

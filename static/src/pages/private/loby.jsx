@@ -19,6 +19,8 @@ export default function Lobby({ authenticated }){
         e.preventDefault();
 
         // const to64 = btoa(response.success.ws_address);
+
+        //TODO: check if user can join game and if he has a character
     
         navigate({
           pathname: `/game/${gameaddress}`,

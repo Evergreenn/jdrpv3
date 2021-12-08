@@ -77,3 +77,7 @@
 .hide {
   display: none;
 }
+.small {
+  font-size: 8;
+  color: var(--color-darkGrey)
+}

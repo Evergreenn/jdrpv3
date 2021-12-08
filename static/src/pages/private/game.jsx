@@ -75,6 +75,14 @@ export default function Game() {
 
     }, [socketError])
 
+    useEffect(() => {
+
+        return (
+            <UserView username={token_decoded.username} />
+        )
+
+    }, [isSocketCreator])
+
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
         [ReadyState.OPEN]: 'Open',
@@ -99,6 +107,7 @@ export default function Game() {
         document.getElementById("main-nav").classList.remove("hide")
         navigate("/app", { replace: true })
     }, []);
+
 
     return (
         <>
@@ -127,9 +136,9 @@ export default function Game() {
 
                 {/* <button onClick={handleOnClick}>test</button> */}
 
-                {!isSocketCreator &&
+                {/* {!isSocketCreator &&
                     <UserView username={token_decoded.username} />
-                }
+                } */}
 
                 {readyState != ReadyState.OPEN &&
                     <Loader />

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/UI/loader";
 import useApiPost from "../../components/ApiCrawler/post";
+import CreatePlayer from "./createplayer";
+
 
 export default function Lobby({ authenticated }) {
 
     const [gameaddress, SetGameAddress] = useState("");
+    const [haveAPlayer, setHaveAPlayer] = useState("");
     const [gamepwd, SetGamepwd] = useState("");
     const [error, SetError] = useState("");
     const [loaded, setLoaded] = useState(false);
@@ -44,8 +47,11 @@ export default function Lobby({ authenticated }) {
         if (response.error) {
             SetError(response.error);
         } else {
+
             if (response.success === null) {
                 //TODO: redirect to charecter creation 
+                setLoaded(true);
+                setHaveAPlayer(false)
 
             } else {
 
@@ -66,6 +72,12 @@ export default function Lobby({ authenticated }) {
         )
     }
 
+    if (haveAPlayer === false) {
+        return (
+            <CreatePlayer gameId={gameaddress}/>
+        )
+    }
+
     return (
         <>{authenticated &&
             <div className="container">
@@ -76,7 +88,7 @@ export default function Lobby({ authenticated }) {
                     <div className="is-center row">
                         <form onSubmit={handleSubmit} autoComplete="off">
                             <label>
-                                Game name :
+                                Game Id :
                                 <input type="text" autoComplete="off" value={gameaddress} onChange={handleChangeName} /> </label>
                             {/* <input className="pull-right" type="submit" value="Submit" /> */}
                             <label>

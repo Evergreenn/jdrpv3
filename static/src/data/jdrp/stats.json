@@ -1,35 +1,45 @@
 {
-  "description": "Est-ce qu'un personnage est musclé et perspicace ? Brillant et charmant ? Agile et robuste ? Les valeurs des caractéristiques définissent les qualités et les faiblesses d'une créature. Les trois principaux jets de dés du jeu (le jet de caractéristique, le jet de sauvegarde et le jet d'attaque) se basent sur les huits valeurs des caractéristiques.",
-  "strengh": {
-    "description": "La puissance physique, l'aptitude athlétique naturelle",
-    "mandatory": "guerrier, paladin, moine"
-  },
-  "dexterity": {
-    "description": "L'agilité, les réflexes, l'équilibre",
-    "mandatory": "Moine, rôdeur, roublard"
-  },
-  "endurance": {
-    "description": "La santé, l'endurance, la force vitale",
-    "mandatory": "Toutes les classes"
-  },
-  "charism": {
-    "description": "La force de personnalité, l'éloquence, le leadership",
-    "mandatory": "Roublard"
-  },
-  "perception": {
-    "description": "La perception, l'intuition, la perspicacité",
-    "mandatory": "Rôdeur, roublard"
-  },
-  "luck": {
-    "description": "trait obscur laissé à la fantaisie du mj",
-    "mandatory": "Rôdeur, roublard"
-  },
-  "willpower": {
-    "description": "L'acuité mentale, la force de caractère",
-    "mandatory": "Mage, clerc, paladin, druid"
-  },
-  "education": {
-    "description": "Le raisonnement, la mémoire",
-    "mandatory": "Mage, clerc, druid, moine"
-  }
+  "description": "Is a character muscular and insightful? Shiny and charming? Agile and robust? Characteristic values ​​define the qualities and weaknesses of a creature. The three main dice rolls in the game (the characteristic roll, the saving throw, and the attack roll) are based on these eight characteristic values.",
+  "stats": [
+    {
+      "label": "strengh",
+      "description": "Physical power, natural athletic ability",
+      "mandatory": "guerrier, paladin, moine"
+    },
+    {
+      "label": "dexterity",
+      "description": "Agility, reflexes, balance",
+      "mandatory": "Moine, rôdeur, roublard"
+    },
+    {
+      "label": "endurance",
+      "description": "Health, endurance, life force",
+      "mandatory": "Toutes les classes"
+    },
+    {
+      "label": "charism",
+      "description": "Personality, eloquence, leadership",
+      "mandatory": "Roublard"
+    },
+    {
+      "label": "perception",
+      "description": "Perception, intuition, insight",
+      "mandatory": "Rôdeur, roublard"
+    },
+    {
+      "label": "luck",
+      "description": "Obscure line left to the fantasy of the GM",
+      "mandatory": "Rôdeur, roublard"
+    },
+    {
+      "label": "willpower",
+      "description": "Mental acuity, strength of character",
+      "mandatory": "Mage, clerc, paladin, druid"
+    },
+    {
+      "label": "education",
+      "description": "Reasoning, memory",
+      "mandatory": "Mage, clerc, druid, moine"
+    }
+  ]
 }

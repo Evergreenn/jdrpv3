@@ -1,31 +1,69 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/UI/loader";
+import useApiPost from "../../components/ApiCrawler/post";
 
-
-export default function Lobby({ authenticated }){
+export default function Lobby({ authenticated }) {
 
     const [gameaddress, SetGameAddress] = useState("");
+    const [gamepwd, SetGamepwd] = useState("");
     const [error, SetError] = useState("");
+    const [loaded, setLoaded] = useState(false);
+    const { postData } = useApiPost();
     const navigate = useNavigate();
 
+
+    useEffect(() => {
+        setLoaded(true);
+    }, [])
 
     const handleChangeName = e => {
         e.preventDefault();
         SetGameAddress(e.target.value);
-
     }
 
-    const handleSubmit = e => {
+    const handleChangePassword = e => {
         e.preventDefault();
+        SetGamepwd(e.target.value);
+    }
 
-        // const to64 = btoa(response.success.ws_address);
+    const handleSubmit = async e => {
+        e.preventDefault();
+        setLoaded(false);
 
-        //TODO: check if user can join game and if he has a character
-    
-        navigate({
-          pathname: `/game/${gameaddress}`,
-        //   search: `?args=`,
+        const response = await postData("api/player", {
+            "game_id": gameaddress,
+            // "password": password,
         });
+
+        if (response.success === undefined || response.error === undefined) {
+            SetError("Something really wrong happened");
+            return false;
+        }
+
+        if (response.error) {
+            SetError(response.error);
+        } else {
+            if (response.success === null) {
+                //TODO: redirect to charecter creation 
+
+            } else {
+
+                //TODO: get socket address and redirect to game
+
+                // navigate({
+                //   pathname: `/game/${gameaddress}`,
+                // //   search: `?args=`,
+                // });
+
+            }
+        }
+    }
+
+    if (loaded === false) {
+        return (
+            <Loader />
+        )
     }
 
     return (
@@ -40,6 +78,10 @@ export default function Lobby({ authenticated }){
                             <label>
                                 Game name :
                                 <input type="text" autoComplete="off" value={gameaddress} onChange={handleChangeName} /> </label>
+                            {/* <input className="pull-right" type="submit" value="Submit" /> */}
+                            <label>
+                                Game Password :
+                                <input type="text" autoComplete="off" value={gamepwd} onChange={handleChangePassword} /> </label>
                             <input className="pull-right" type="submit" value="Submit" />
                         </form>
                     </div>
@@ -49,7 +91,7 @@ export default function Lobby({ authenticated }){
                 </div>
             </div>
         }
-    </>
+        </>
     )
 
 }

@@ -23,6 +23,13 @@ pub struct User {
     pub user_permissions: String
 }
 
+
+#[derive(Serialize, Debug, PartialEq, Eq)]
+pub struct Player {
+    pub player_id: String,
+    pub player_cs: String,
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct Game {
     pub game_id: String,
@@ -79,11 +86,13 @@ pub fn insert_new_user(username: &String, password: String, permissions: Vec<Str
     Ok(user_id.to_string())
 }
 
-pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst, game_slug: &String,) -> bool {
+pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst, game_slug: &String,) -> String {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
     let game_id = Uuid::new_v4().to_string();
+    let ro = game_id.clone();
+
     let game_slug = game_slug.to_string();
 
     let game_type = game_type.to_string();
@@ -124,7 +133,7 @@ pub fn insert_new_game(game_name: String, game_password: String, creator_id: Str
     )
     .unwrap();
 
-    true
+    ro
 }
 
 pub fn get_user(username: &String)-> Vec<User> {
@@ -143,6 +152,29 @@ pub fn get_user(username: &String)-> Vec<User> {
     ret
 }
 
+pub fn get_player(user_id: String, game_id: String) -> Option<Player> {
+
+    let pool = mysql_connection();
+    let mut conn = pool.get_conn().unwrap();
+
+    let mut ret = conn.exec_map(
+        "SELECT player_id, player_cs FROM player WHERE creator_id =:user_id AND game_id_ =:game_id;", 
+        params!{
+            user_id,
+            game_id
+        }, 
+    |(player_id, player_cs)| {
+        Player{player_id, player_cs}
+    }).unwrap();
+
+    if ret.is_empty(){
+        None
+    }else {
+        let mut one = ret.drain(0..1);
+        one.next()
+    }
+
+}
 
 pub fn get_game(user_id: &String)-> Vec<GamePublic> {
     let pool = mysql_connection();

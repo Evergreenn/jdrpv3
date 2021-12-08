@@ -51,7 +51,7 @@ pub struct UserInputGame {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct GameDelationmInput {
+pub struct GameIdInput {
     pub game_id: String,
 }
 
@@ -141,18 +141,28 @@ pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error>{
 
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/player")]
+pub async fn get_player(info: web::Json<GameIdInput>, credentials: BearerAuth) -> impl Responder {
+    let game_info = info.into_inner();
+
+    println!("{:#?}", game_info);
+    
+    let t = decode_jwt(credentials.token()).unwrap();
+    let player = crate::repository::manage::get_player(game_info.game_id, t.user_id);
+
+    web::Json(player)
+}
+
+
+#[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/create-game")]
 pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth) -> impl Responder {
     let game_info = info.into_inner();
 
     println!("{:#?}", game_info);
-    // println!("{:#?}", dotenv!("WS_BINARY_PATH"));
-
-
-
     //TODO: check values from input
-    
     //TODO: start process with game parameters
+
     let sock = ws::get_free_socket_address();
     let cmd_args = format!("-w{}", sock);
     let cmd_arg = format!("-t{}", credentials.token());
@@ -162,12 +172,15 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
     let t = decode_jwt(credentials.token()).unwrap();
 
 //TODO: b64 sock
-    insert_new_game(game_info.gamename, game_info.password, t.user_id, game_info.cst, &sock);
+    let game_id = insert_new_game(game_info.gamename, game_info.password, t.user_id, game_info.cst, &sock);
 
+    let cmd_argg = format!("-g{}", game_id);
+    println!("game_id: {:#?}", sock);
 
     let _output = Command::new(dotenv!("WS_BINARY_PATH"))
     .arg(cmd_args)
     .arg(cmd_arg)
+    .arg(cmd_argg)
     .spawn()
     .unwrap();
     // .expect("failed to load socket");
@@ -177,7 +190,7 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/delete-game")]
-pub async fn delete_game(info: web::Json<GameDelationmInput>, credentials: BearerAuth) -> impl Responder {
+pub async fn delete_game(info: web::Json<GameIdInput>, credentials: BearerAuth) -> impl Responder {
     let game_info = info.into_inner();
     let t = decode_jwt(credentials.token()).unwrap();
 

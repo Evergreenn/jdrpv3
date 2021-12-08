@@ -2,3 +2,4 @@
 tags
 /static/node_modules
 refinery.toml
+.env.local

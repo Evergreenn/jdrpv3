@@ -108,7 +108,6 @@ export default function Game() {
         navigate("/app", { replace: true })
     }, []);
 
-
     return (
         <>
             <div>

@@ -77,7 +77,124 @@
 .hide {
   display: none;
 }
+
 .small {
   font-size: 8;
   color: var(--color-darkGrey)
+}
+
+
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+/* 
+.number-input {
+  border: 0;
+  display: inline-flex;
+}
+
+.number-input,
+.number-input * {
+  box-sizing: border-box;
+}
+
+.number-input span {
+  all: initial;
+  outline:none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1rem;
+  cursor: pointer;
+  margin: 0;
+  padding: 1rem 1.5rem;
+  position: relative;
+  box-shadow: 0px 0px 1px var(--color-darkGrey);
+  color: var(--font-color);
+  text-align: center;
+    border-radius: 4px;
+}
+
+.number-input span:hover {
+  opacity: 0.5;
+}
+
+.number-input span:before,
+.number-input span:after {
+  display: inline-block;
+  position: absolute;
+  content: '';
+  width: 1rem;
+  height: 2px;
+  background-color: #212121;
+  transform: translate(-50%, -50%);
+}
+.number-input span.plus:after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+
+.number-input input[type=number] {
+  font-family: sans-serif;
+  max-width: 5rem;
+  padding: .5rem;
+  border: none;
+  border-width: 0 2px;
+  font-size: 2rem;
+  height: 3rem;
+  font-weight: bold;
+  text-align: center;
+  color:#9be3df;
+} */
+
+.handle-counter {
+  /* overflow: hidden; */
+  display: inline-flex;
+}
+
+.handle-counter .counter-minus, .handle-counter .counter-plus, .handle-counter input {
+  float: left;
+  text-align: center;
+}
+
+.handle-counter .counter-minus, .handle-counter .counter-plus {
+  text-align: center;
+}
+
+.quantity {
+  max-width: 20rem;
+  padding: .5rem;
+  text-align: center;
+  position: relative
+}
+
+.btn {
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  color: var(--font-color);
+}
+
+.btn:disabled, .btn:disabled:hover {
+  background-color: darkgrey;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--color-primary)
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--color-primary)
 }

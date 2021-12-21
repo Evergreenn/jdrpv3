@@ -96,7 +96,7 @@
             "endurance": -10,
             "charism": 5,
             "perception": 0,
-            "education": -5
+            "education": 0
         },
         "half_orc": {
             "strengh": 15,

@@ -9,9 +9,9 @@ import csRules from '../../data/jdrp/character_creation_rules.json'
 const CreatePlayer = ({ gameId }) => {
 
     const [state, setState] = useState({});
-    const [stats, setStats] = useState(statsRules);
-    const [classes, setClasses] = useState(classRules);
-    const [races, setRaces] = useState(raceRules);
+    const [stats] = useState(statsRules);
+    const [classes] = useState(classRules);
+    const [races] = useState(raceRules);
     const [loaded, setLoaded] = useState(false);
     const [classDescr, setClassDescr] = useState(false);
     const [raceDescr, setRaceDescr] = useState(false);
@@ -25,6 +25,7 @@ const CreatePlayer = ({ gameId }) => {
     const plus = useRef([]);
     const minus = useRef([]);
     const Ref = useRef([]);
+
     Ref.current = stats.stats.map((_, i) => Ref.current[i] ?? React.createRef());
     plus.current = stats.stats.map((_, i) => plus.current[i] ?? React.createRef());
     minus.current = stats.stats.map((_, i) => minus.current[i] ?? React.createRef());
@@ -114,41 +115,45 @@ const CreatePlayer = ({ gameId }) => {
             })
         }
 
-    }, [totalPoint, classchoiced, racechoiced])
+    }, [totalPoint, classchoiced, racechoiced, step])
 
     const check_value = (element, i) => {
 
-        if (totalPoint <= 0) {
-            plus.current[i].current.disabled = true;
-        } else {
-            if (element.current.value <= csRules.game_stats.min_per_cat) {
-                minus.current[i].current.disabled = true;
-            }
-
-            if (element.current.value >= csRules.game_stats.max_per_cat) {
-                plus.current[i].current.disabled = true;
-            }
-
-            if (element.current.value < csRules.game_stats.max_per_cat) {
-                plus.current[i].current.disabled = false;
-            }
-
-            if (element.current.value > csRules.game_stats.min_per_cat) {
-                minus.current[i].current.disabled = false;
-            }
-        }
-
-        if(element.current.value < csRules.game_stats.min_per_cat){
-            if(!element.current.classList.contains("text-error")){
+        if (element.current.value < csRules.game_stats.min_per_cat) {
+            if (!element.current.classList.contains("text-error")) {
                 element.current.classList.add("text-error");
             }
-           
-        }else {
-            if(element.current.classList.contains("text-error")){
+
+        } else {
+            if (element.current.classList.contains("text-error")) {
                 element.current.classList.remove("text-error");
             }
         }
 
+        if (totalPoint <= 0) {
+            plus.current[i].current.disabled = true;
+
+            if (parseInt(element.current.value) - parseInt(step) < csRules.game_stats.min_per_cat) {
+                minus.current[i].current.disabled = true;
+            } else {
+                minus.current[i].current.disabled = false;
+            }
+        } else {
+
+            if (parseInt(element.current.value) + parseInt(step) > csRules.game_stats.max_per_cat) {
+                plus.current[i].current.disabled = true;
+            } else {
+                plus.current[i].current.disabled = false;
+            }
+
+            console.log(parseInt(element.current.value) - parseInt(step))
+
+            if (parseInt(element.current.value) - parseInt(step) < csRules.game_stats.min_per_cat) {
+                minus.current[i].current.disabled = true;
+            } else {
+                minus.current[i].current.disabled = false;
+            }
+        }
 
     }
 
@@ -176,10 +181,15 @@ const CreatePlayer = ({ gameId }) => {
         e.preventDefault();
     }
 
+    const checkIfAvailablePoint = (nbPoints, plus) => {
+
+        return plus ? (totalPoint - nbPoints < 0 ? false : true) : (totalPoint + nbPoints > csRules.game_stats.max_stat_wcl ? false : true);
+    }
+
     const handleMinus = (e, i, ref) => {
         e.preventDefault();
 
-        if (parseInt(ref.current.value) - parseInt(step) < csRules.game_stats.min_per_cat) {
+        if (parseInt(ref.current.value) - parseInt(step) <= csRules.game_stats.min_per_cat) {
             ref.current.value = csRules.game_stats.min_per_cat;
         } else {
             ref.current.stepDown(step || 1);
@@ -191,11 +201,19 @@ const CreatePlayer = ({ gameId }) => {
     const handlePlus = (e, i, ref) => {
         e.preventDefault();
 
-        if (parseInt(ref.current.value) + parseInt(step) > csRules.game_stats.max_per_cat) {
-            ref.current.value = csRules.game_stats.max_per_cat;
+        if (checkIfAvailablePoint(step, true) === false) {
+            ref.current.value = parseInt(ref.current.value) + totalPoint;
         } else {
-            ref.current.stepUp(step || 1);
+
+            if (parseInt(ref.current.value) + parseInt(step) >= csRules.game_stats.max_per_cat) {
+                ref.current.value = csRules.game_stats.max_per_cat;
+            }
+            else {
+                ref.current.stepUp(step || 1);
+            }
+
         }
+
         setState(prevState => ({ ...prevState, [ref.current.name]: ref.current.value }));
 
     }
@@ -293,6 +311,8 @@ const CreatePlayer = ({ gameId }) => {
                                 <select onChange={e => handleChangeStep(e.target.value)}>
                                     <option value="1">1</option>
                                     <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="70">70</option>
                                 </select>
                             </label>
                         </div>
@@ -304,7 +324,7 @@ const CreatePlayer = ({ gameId }) => {
                                             {stats.label}
                                             <div class="handle-counter" id="handleCounter">
                                                 <button ref={minus.current[idx]} onClick={e => handleMinus(e, idx, Ref.current[idx])} className="counter-minus btn btn-primary" >-{step}</button>
-                                                <input style={{fontWeight: "bold", width: "7rem" }} ref={Ref.current[idx]} className="quantity" type="number" name={stats.label} autoComplete="off" value={state[stats.label]} onKeyDown={handleKeyDown} onChange={handleChangeStats.bind()} />
+                                                <input style={{ fontWeight: "bold", width: "7rem" }} ref={Ref.current[idx]} className="quantity" type="number" name={stats.label} autoComplete="off" value={state[stats.label]} onKeyDown={handleKeyDown} onChange={handleChangeStats.bind()} />
                                                 <button ref={plus.current[idx]} onClick={e => handlePlus(e, idx, Ref.current[idx])} className="counter-plus btn btn-primary">+{step}</button>
                                             </div>
                                             <p className="small">{stats.description}</p>

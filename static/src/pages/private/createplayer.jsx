@@ -196,6 +196,9 @@ const CreatePlayer = ({ gameId }) => {
             }else if (control !== csRules.game_stats.max_stat_wcl) {
                 setIsSubbmitted(false);
                 setError({ level: "error", message: "The sum of all characteristics must be equal to 300" })
+            }else if(totalPoint !== 0){
+                setIsSubbmitted(false);
+                setError({ level: "error", message: "All points have to be spent" })
             }else {
                 //TODO: Send to the api
                 alert("yey")

@@ -148,7 +148,10 @@ pub async fn get_player(info: web::Json<GameIdInput>, credentials: BearerAuth) -
     println!("{:#?}", game_info);
     
     let t = decode_jwt(credentials.token()).unwrap();
-    let player = crate::repository::manage::get_player(game_info.game_id, t.user_id);
+    let player = crate::repository::manage::get_player(t.user_id, game_info.game_id);
+
+    println!("user get from db {:#?}", player);
+
 
     web::Json(player)
 }

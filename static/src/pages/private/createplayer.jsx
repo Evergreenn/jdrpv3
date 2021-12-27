@@ -19,6 +19,7 @@ const CreatePlayer = ({ gameId }) => {
     const [totalPoint, setTotalPoint] = useState(csRules.game_stats.max_stat_wcl);
     const [avatarList, setAvatarList] = useState([]);
     const [avatar, setAvatar] = useState("");
+    const [alignment, setAlignment] = useState("");
 
     const [classchoiced, setClassChoiced] = useState("warrior");
     const [racechoiced, setRaceChoices] = useState("human");
@@ -172,6 +173,12 @@ const CreatePlayer = ({ gameId }) => {
     const handleChangeName = e => {
     }
 
+    const handleChangeAlignment = alignement => {
+        console.log(alignement);
+        setAlignment(alignement);
+
+    }
+
     const handleChangePortrait = e => {
         const { value } = e.target;
         // console.log(value);
@@ -232,6 +239,13 @@ const CreatePlayer = ({ gameId }) => {
 
     }
 
+    const handleSubmit = e => {
+        e.preventDefault();
+        console.log(alignment, classchoiced, racechoiced, state, avatar);
+
+
+    }
+
     if (loaded === false) {
         return (
             <Loader />
@@ -245,29 +259,39 @@ const CreatePlayer = ({ gameId }) => {
                     <div className="col is-center"><h1>Character creation</h1></div>
                 </div>
 
-                <form action="">
+                <form onSubmit={handleSubmit}>
                     <div className="card">
                         <div className="row">
                             <div className="col">
                                 <label>
                                     Character name :
-                                    <input type="text" autoComplete="off" onChange={handleChangeName} />
+                                    <input required type="text" autoComplete="off" onChange={handleChangeName} />
                                 </label>
 
                                 <label>
                                     Color :
-                                    <input type="color" autoComplete="off" onChange={handleChangeName} />
+                                    <input required type="color" autoComplete="off" onChange={handleChangeName} />
                                 </label>
                             </div>
                             <div className="col">
-                                <label>
-                                    Character name :
-                                    <input type="text" autoComplete="off" onChange={handleChangeName} />
-                                </label>
+                            <label>
+                                Alignment :
+                                <select onChange={e => handleChangeAlignment(e.target.value)}>
+                                    <option value="Lawful good">Lawful good</option>
+                                    <option value="Neutral good">Neutral good</option>
+                                    <option value="Chaotic good">Chaotic good</option>
+                                    <option value="Lawful neutral">Lawful neutral</option>
+                                    <option value="True neutral">True neutral </option>
+                                    <option value="Chaotic neutral">Chaotic neutral</option>
+                                    <option value="Lawful evil">Lawful evil</option>
+                                    <option value="Neutral evil">Neutral evil</option>
+                                    <option value="Chaotic evil">Chaotic evil</option>
+                                </select>
+                            </label>
 
                                 <label>
                                     Character name :
-                                    <input type="text" autoComplete="off" onChange={handleChangeName} />
+                                    <input required type="text" autoComplete="off" onChange={handleChangeName} />
                                 </label>
                             </div>
                         </div>
@@ -282,7 +306,7 @@ const CreatePlayer = ({ gameId }) => {
                             <div className="col">
                                 <label>
                                     Class :
-                                    <select value={classchoiced} onChange={e => handleChangeClass(e.target.value)}>
+                                    <select required value={classchoiced} onChange={e => handleChangeClass(e.target.value)}>
                                         {classes.map((data, idx) =>
                                             <option key={idx} value={data.label}>{data.label}</option>
                                         )}
@@ -296,7 +320,7 @@ const CreatePlayer = ({ gameId }) => {
                             <div className="col">
                                 <label>
                                     Race :
-                                    <select onChange={e => handleChangeRace(e.target.value)}>
+                                    <select required onChange={e => handleChangeRace(e.target.value)}>
                                         {races.map((data, idx) =>
                                             <option key={idx} value={data.label}>{data.label}</option>
                                         )}
@@ -341,7 +365,7 @@ const CreatePlayer = ({ gameId }) => {
                                             {stats.label}
                                             <div class="handle-counter" id="handleCounter">
                                                 <button ref={minus.current[idx]} onClick={e => handleMinus(e, idx, Ref.current[idx])} className="counter-minus btn btn-primary" >-{step}</button>
-                                                <input style={{ fontWeight: "bold", width: "7rem" }} ref={Ref.current[idx]} className="quantity" type="number" name={stats.label} autoComplete="off" value={state[stats.label]} onKeyDown={handleKeyDown} onChange={handleChangeStats.bind()} />
+                                                <input required style={{ fontWeight: "bold", width: "7rem" }} ref={Ref.current[idx]} className="quantity" type="number" name={stats.label} autoComplete="off" value={state[stats.label]} onKeyDown={handleKeyDown} onChange={handleChangeStats.bind()} />
                                                 <button ref={plus.current[idx]} onClick={e => handlePlus(e, idx, Ref.current[idx])} className="counter-plus btn btn-primary">+{step}</button>
                                             </div>
                                             <p className="small">{stats.description}</p>
@@ -369,7 +393,7 @@ const CreatePlayer = ({ gameId }) => {
                             {avatarList.map((url, idx) =>
                                 <div className="col-3 imgcheckboxed">
                                     <label >
-                                        <input key={idx}  type="radio" name="portrait" value={`portrait${idx}`} onChange={handleChangePortrait} />
+                                        <input required key={idx}  type="radio" name="portrait" value={`portrait${idx}`} onChange={handleChangePortrait} />
                                         <img src={url} className="is-center" alt="" />
                                     </label>
                                 </div>

@@ -5,6 +5,7 @@ import statsRules from '../../data/jdrp/stats.json'
 import classRules from '../../data/jdrp/classes.json'
 import raceRules from '../../data/jdrp/races.json'
 import csRules from '../../data/jdrp/character_creation_rules.json'
+import ToasterAlert from "../../components/UI/toasterAlert";
 
 
 const CreatePlayer = ({ gameId }) => {
@@ -19,7 +20,15 @@ const CreatePlayer = ({ gameId }) => {
     const [totalPoint, setTotalPoint] = useState(csRules.game_stats.max_stat_wcl);
     const [avatarList, setAvatarList] = useState([]);
     const [avatar, setAvatar] = useState("");
-    const [alignment, setAlignment] = useState("");
+    const [alignment, setAlignment] = useState("Lawful good");
+    const [particularity, setParticularity] = useState("");
+    const [name, setName] = useState("");
+    const [error, setError] = useState(null);
+    const [isSubbmitted, setIsSubbmitted] = useState(false);
+
+
+    // const randomColor = ;
+    const [color, setColor] = useState("#" + Math.floor(Math.random() * 16777215).toString(16));
 
     const [classchoiced, setClassChoiced] = useState("warrior");
     const [racechoiced, setRaceChoices] = useState("human");
@@ -166,22 +175,57 @@ const CreatePlayer = ({ gameId }) => {
 
     }
 
+    useEffect(() => {
+
+        if (isSubbmitted) {
+
+            let control = 0;
+            let err = false;
+
+            for (let property in state) {
+                control += parseInt(state[property]);
+                if (parseInt(state[property]) < 10 || parseInt(state[property]) > 70) {
+                    err = true;
+
+                }
+            }
+
+            if(err){
+                setIsSubbmitted(false);
+                setError({ level: "error", message: "The values ​​of the characteristics must be between 10 and 70 " })
+            }else if (control !== csRules.game_stats.max_stat_wcl) {
+                setIsSubbmitted(false);
+                setError({ level: "error", message: "The sum of all characteristics must be equal to 300" })
+            }else {
+                //TODO: Send to the api
+                alert("yey")
+            }
+        }
+
+    }, [isSubbmitted])
+
     const handleChangeStep = val => {
         setStep(val)
     }
 
     const handleChangeName = e => {
+        setName(e.target.value);
+    }
+
+    const handleChangeColor = e => {
+        setColor(e.target.value)
     }
 
     const handleChangeAlignment = alignement => {
-        console.log(alignement);
         setAlignment(alignement);
+    }
 
+    const handleChangeParticularity = p => {
+        setParticularity(p);
     }
 
     const handleChangePortrait = e => {
         const { value } = e.target;
-        // console.log(value);
         setAvatar(value);
     }
 
@@ -241,9 +285,8 @@ const CreatePlayer = ({ gameId }) => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(alignment, classchoiced, racechoiced, state, avatar);
-
-
+        setError(null);
+        setIsSubbmitted(true);
     }
 
     if (loaded === false) {
@@ -270,28 +313,30 @@ const CreatePlayer = ({ gameId }) => {
 
                                 <label>
                                     Color :
-                                    <input required type="color" autoComplete="off" onChange={handleChangeName} />
+                                    <input required type="color" value={color} autoComplete="off" onChange={handleChangeColor} />
                                 </label>
                             </div>
                             <div className="col">
-                            <label>
-                                Alignment :
-                                <select onChange={e => handleChangeAlignment(e.target.value)}>
-                                    <option value="Lawful good">Lawful good</option>
-                                    <option value="Neutral good">Neutral good</option>
-                                    <option value="Chaotic good">Chaotic good</option>
-                                    <option value="Lawful neutral">Lawful neutral</option>
-                                    <option value="True neutral">True neutral </option>
-                                    <option value="Chaotic neutral">Chaotic neutral</option>
-                                    <option value="Lawful evil">Lawful evil</option>
-                                    <option value="Neutral evil">Neutral evil</option>
-                                    <option value="Chaotic evil">Chaotic evil</option>
-                                </select>
-                            </label>
+                                <label>
+                                    Alignment :
+                                    <select required value={alignment} onChange={e => handleChangeAlignment(e.target.value)}>
+                                        <option value="Lawful good">Lawful good</option>
+                                        <option value="Neutral good">Neutral good</option>
+                                        <option value="Chaotic good">Chaotic good</option>
+                                        <option disabled class="separator"></option>
+                                        <option value="Lawful neutral">Lawful neutral</option>
+                                        <option value="True neutral">True neutral </option>
+                                        <option value="Chaotic neutral">Chaotic neutral</option>
+                                        <option disabled class="separator"></option>
+                                        <option value="Lawful evil">Lawful evil</option>
+                                        <option value="Neutral evil">Neutral evil</option>
+                                        <option value="Chaotic evil">Chaotic evil</option>
+                                    </select>
+                                </label>
 
                                 <label>
-                                    Character name :
-                                    <input required type="text" autoComplete="off" onChange={handleChangeName} />
+                                    Character particularity :
+                                    <input required type="text" autoComplete="off" onChange={e => handleChangeParticularity(e.target.value)} />
                                 </label>
                             </div>
                         </div>
@@ -393,7 +438,7 @@ const CreatePlayer = ({ gameId }) => {
                             {avatarList.map((url, idx) =>
                                 <div className="col-3 imgcheckboxed">
                                     <label >
-                                        <input required key={idx}  type="radio" name="portrait" value={`portrait${idx}`} onChange={handleChangePortrait} />
+                                        <input required key={idx} type="radio" name="portrait" value={`portrait${idx}`} onChange={handleChangePortrait} />
                                         <img src={url} className="is-center" alt="" />
                                     </label>
                                 </div>
@@ -408,6 +453,10 @@ const CreatePlayer = ({ gameId }) => {
                     </div>
                 </form>
             </div>
+            {error &&
+                <ToasterAlert level={error.level} message={error.message} />
+            }
+
         </>
     )
 }

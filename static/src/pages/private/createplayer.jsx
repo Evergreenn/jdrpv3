@@ -6,6 +6,7 @@ import classRules from '../../data/jdrp/classes.json'
 import raceRules from '../../data/jdrp/races.json'
 import csRules from '../../data/jdrp/character_creation_rules.json'
 
+
 const CreatePlayer = ({ gameId }) => {
 
     const [state, setState] = useState({});
@@ -16,6 +17,8 @@ const CreatePlayer = ({ gameId }) => {
     const [classDescr, setClassDescr] = useState(false);
     const [raceDescr, setRaceDescr] = useState(false);
     const [totalPoint, setTotalPoint] = useState(csRules.game_stats.max_stat_wcl);
+    const [avatarList, setAvatarList] = useState([]);
+    const [avatar, setAvatar] = useState("");
 
     const [classchoiced, setClassChoiced] = useState("warrior");
     const [racechoiced, setRaceChoices] = useState("human");
@@ -35,8 +38,15 @@ const CreatePlayer = ({ gameId }) => {
             setState(prevState => ({ ...prevState, [element.label]: 0 }));
         });
 
+        const a = [];
+        [...Array(8)].map(_ => {
+            a.push("https://via.placeholder.com/200x250")
+        })
+
+        setAvatarList(a)
         setLoaded(true);
 
+        console.log(gameId);
     }, []);
 
 
@@ -146,8 +156,6 @@ const CreatePlayer = ({ gameId }) => {
                 plus.current[i].current.disabled = false;
             }
 
-            console.log(parseInt(element.current.value) - parseInt(step))
-
             if (parseInt(element.current.value) - parseInt(step) < csRules.game_stats.min_per_cat) {
                 minus.current[i].current.disabled = true;
             } else {
@@ -162,6 +170,12 @@ const CreatePlayer = ({ gameId }) => {
     }
 
     const handleChangeName = e => {
+    }
+
+    const handleChangePortrait = e => {
+        const { value } = e.target;
+        // console.log(value);
+        setAvatar(value);
     }
 
     const handleChangeClass = classSelected => {
@@ -232,62 +246,67 @@ const CreatePlayer = ({ gameId }) => {
                 </div>
 
                 <form action="">
-                    <div className="card row">
-                        <div className="col">
-                            <label>
-                                Character name :
-                                <input type="text" autoComplete="off" onChange={handleChangeName} />
-                            </label>
+                    <div className="card">
+                        <div className="row">
+                            <div className="col">
+                                <label>
+                                    Character name :
+                                    <input type="text" autoComplete="off" onChange={handleChangeName} />
+                                </label>
 
-                            <label>
-                                Color :
-                                <input type="color" autoComplete="off" onChange={handleChangeName} />
-                            </label>
-                        </div>
-                        <div className="col">
-                            <label>
-                                Character name :
-                                <input type="text" autoComplete="off" onChange={handleChangeName} />
-                            </label>
+                                <label>
+                                    Color :
+                                    <input type="color" autoComplete="off" onChange={handleChangeName} />
+                                </label>
+                            </div>
+                            <div className="col">
+                                <label>
+                                    Character name :
+                                    <input type="text" autoComplete="off" onChange={handleChangeName} />
+                                </label>
 
-                            <label>
-                                Character name :
-                                <input type="text" autoComplete="off" onChange={handleChangeName} />
-                            </label>
+                                <label>
+                                    Character name :
+                                    <input type="text" autoComplete="off" onChange={handleChangeName} />
+                                </label>
+                            </div>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col is-center"><h2>Class'n race</h2></div>
                     </div>
-                    <div className="card row">
-                        <div className="col">
-                            <label>
-                                Class :
-                                <select value={classchoiced} onChange={e => handleChangeClass(e.target.value)}>
-                                    {classes.map((data, idx) =>
-                                        <option key={idx} value={data.label}>{data.label}</option>
-                                    )}
-                                </select>
-                            </label>
+                    <div className="card">
+                        <div className="row">
 
-                            {classDescr &&
-                                <p className="small">{classDescr}</p>
-                            }
-                        </div>
-                        <div className="col">
-                            <label>
-                                Race :
-                                <select onChange={e => handleChangeRace(e.target.value)}>
-                                    {races.map((data, idx) =>
-                                        <option key={idx} value={data.label}>{data.label}</option>
-                                    )}
-                                </select>
-                            </label>
+                            <div className="col">
+                                <label>
+                                    Class :
+                                    <select value={classchoiced} onChange={e => handleChangeClass(e.target.value)}>
+                                        {classes.map((data, idx) =>
+                                            <option key={idx} value={data.label}>{data.label}</option>
+                                        )}
+                                    </select>
+                                </label>
 
-                            {raceDescr &&
-                                <p className="small">{raceDescr}</p>
-                            }
+                                {classDescr &&
+                                    <p className="small">{classDescr}</p>
+                                }
+                            </div>
+                            <div className="col">
+                                <label>
+                                    Race :
+                                    <select onChange={e => handleChangeRace(e.target.value)}>
+                                        {races.map((data, idx) =>
+                                            <option key={idx} value={data.label}>{data.label}</option>
+                                        )}
+                                    </select>
+                                </label>
+
+                                {raceDescr &&
+                                    <p className="small">{raceDescr}</p>
+                                }
+                            </div>
                         </div>
                     </div>
 
@@ -311,8 +330,6 @@ const CreatePlayer = ({ gameId }) => {
                                 <select onChange={e => handleChangeStep(e.target.value)}>
                                     <option value="1">1</option>
                                     <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="70">70</option>
                                 </select>
                             </label>
                         </div>
@@ -333,6 +350,36 @@ const CreatePlayer = ({ gameId }) => {
                                     </div>
                                 </div>
                             )}
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col is-center"><h2>Avatar</h2></div>
+                    </div>
+
+                    <div className="row">
+                        <p className="col">It will be displayed in the current game.</p>
+                    </div>
+                    {/* 
+                    TODO: Work with the avatar and maybe an upload function
+                    */}
+
+                    <div className="card">
+                        <div className="row">
+                            {avatarList.map((url, idx) =>
+                                <div className="col-3 imgcheckboxed">
+                                    <label >
+                                        <input key={idx}  type="radio" name="portrait" value={`portrait${idx}`} onChange={handleChangePortrait} />
+                                        <img src={url} className="is-center" alt="" />
+                                    </label>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col">
+                            <input className="pull-right" type="submit" value="Submit" />
                         </div>
                     </div>
                 </form>

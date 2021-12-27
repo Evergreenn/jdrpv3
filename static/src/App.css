@@ -198,3 +198,20 @@ input[type=number]::-webkit-outer-spin-button {
 .btn-primary:hover, .btn-primary:focus {
   background-color: var(--color-primary)
 }
+
+.imgcheckboxed [type=radio] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* IMAGE STYLES */
+.imgcheckboxed [type=radio]+img {
+  cursor: pointer;
+}
+
+/* CHECKED STYLES */
+.imgcheckboxed [type=radio]:checked+img {
+  outline: 3px solid var(--color-primary);
+}

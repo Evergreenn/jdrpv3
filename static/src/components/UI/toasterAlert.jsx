@@ -2,14 +2,12 @@ import React, { useEffect, useRef } from "react";
 
 const ToasterAlert = ({ level, message }) => {
 
-    //TODO: put a timer to dismiss the toaster
-
     const toasterRef = useRef(null);
 
         useEffect(() => {
             window.setTimeout(() => {
                 toasterRef.current.style.display = "none";
-            }, 3000)
+            }, 5000)
         }, [toasterRef])
 
     if (level === "success") {

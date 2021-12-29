@@ -6,6 +6,7 @@ import classRules from '../../data/jdrp/classes.json'
 import raceRules from '../../data/jdrp/races.json'
 import csRules from '../../data/jdrp/character_creation_rules.json'
 import ToasterAlert from "../../components/UI/toasterAlert";
+import useApiPost from "../../components/ApiCrawler/post";
 
 
 const CreatePlayer = ({ gameId }) => {
@@ -25,8 +26,10 @@ const CreatePlayer = ({ gameId }) => {
     const [name, setName] = useState("");
     const [error, setError] = useState(null);
     const [isSubbmitted, setIsSubbmitted] = useState(false);
+    const navigate = useNavigate();
 
 
+    const { postData } = useApiPost();
     // const randomColor = ;
     const [color, setColor] = useState("#" + Math.floor(Math.random() * 16777215).toString(16));
 
@@ -175,7 +178,7 @@ const CreatePlayer = ({ gameId }) => {
 
     }
 
-    useEffect(() => {
+    useEffect(async () => {
 
         if (isSubbmitted) {
 
@@ -200,8 +203,78 @@ const CreatePlayer = ({ gameId }) => {
                 setIsSubbmitted(false);
                 setError({ level: "error", message: "All points have to be spent" })
             }else {
-                //TODO: Send to the api
-                alert("yey")
+
+                const player_cs = JSON.stringify({
+                    name: name,
+                    class: classchoiced,
+                    race: racechoiced,
+                    particularity: particularity,
+                    color: color,
+                    avatar: avatar,
+                    alignment, alignment,
+                    strengh: parseInt(state.strengh),
+                    dexterity: parseInt(state.dexterity),
+                    luck: parseInt(state.luck),
+                    willpower: parseInt(state.willpower),
+                    endurance: parseInt(state.endurance),
+                    charism: parseInt(state.charism),
+                    perception: parseInt(state.perception),
+                    education: parseInt(state.education),
+                });
+
+                setLoaded(false);
+
+                const response = await postData("api/create_player", {
+                    "game_id": gameId,
+                    "jsoned_cs": player_cs,
+                });
+
+                setLoaded(true);
+
+                if(!response.success){
+                    const err = JSON.parse(response.error);
+                    setError({ level: "error", message:  err.message + " - error code: "+ err.code})
+                    setIsSubbmitted(false);
+                }else {
+                    if(JSON.parse(response.success) === true ){
+                        setError({ level: "success", message: "Player created, you will be connect to the game in a second" })
+
+
+                        const to64 = btoa(response.success.ws_address);
+
+                        navigate({
+                            pathname: `/game/${to64}`,
+                            //   search: `?args=`,
+                        });
+                    }else {
+                        setIsSubbmitted(false);
+
+                        console.log(response.error)
+                        setError({ level: "error", message: "Can't create player" })
+                    }
+
+                }
+
+        
+                // if (response.success == undefined || response.error == undefined) {
+                //     setError({ level: "error", message: "Something really wrong happened" });
+                // }
+        
+                // if (response.error) {
+                //     setError({ level: "error", message: response.error });
+                //     setIsSubbmitted(false);
+                // } else {
+
+        
+                    // const to64 = btoa(response.success.ws_address);
+        
+                    // navigate({
+                    //     pathname: `/game/${to64}`,
+                    //     //   search: `?args=`,
+                    // });
+                    // SetSocketAddress(response.success.ws_address)
+                // }
+
             }
         }
 
@@ -326,11 +399,11 @@ const CreatePlayer = ({ gameId }) => {
                                         <option value="Lawful good">Lawful good</option>
                                         <option value="Neutral good">Neutral good</option>
                                         <option value="Chaotic good">Chaotic good</option>
-                                        <option disabled class="separator"></option>
+                                        <option disabled className="separator"></option>
                                         <option value="Lawful neutral">Lawful neutral</option>
                                         <option value="True neutral">True neutral </option>
                                         <option value="Chaotic neutral">Chaotic neutral</option>
-                                        <option disabled class="separator"></option>
+                                        <option disabled className="separator"></option>
                                         <option value="Lawful evil">Lawful evil</option>
                                         <option value="Neutral evil">Neutral evil</option>
                                         <option value="Chaotic evil">Chaotic evil</option>
@@ -402,6 +475,7 @@ const CreatePlayer = ({ gameId }) => {
                                 <select onChange={e => handleChangeStep(e.target.value)}>
                                     <option value="1">1</option>
                                     <option value="5">5</option>
+                                    <option value="20">20</option>
                                 </select>
                             </label>
                         </div>
@@ -411,7 +485,7 @@ const CreatePlayer = ({ gameId }) => {
                                     <div className="">
                                         <label className="text-capitalize">
                                             {stats.label}
-                                            <div class="handle-counter" id="handleCounter">
+                                            <div className="handle-counter" id="handleCounter">
                                                 <button ref={minus.current[idx]} onClick={e => handleMinus(e, idx, Ref.current[idx])} className="counter-minus btn btn-primary" >-{step}</button>
                                                 <input required style={{ fontWeight: "bold", width: "7rem" }} ref={Ref.current[idx]} className="quantity" type="number" name={stats.label} autoComplete="off" value={state[stats.label]} onKeyDown={handleKeyDown} onChange={handleChangeStats.bind()} />
                                                 <button ref={plus.current[idx]} onClick={e => handlePlus(e, idx, Ref.current[idx])} className="counter-plus btn btn-primary">+{step}</button>

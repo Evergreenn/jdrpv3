@@ -70,7 +70,7 @@ export default function Game() {
         if(socketError !== false){
             window.setTimeout(() => {
                 navigate("/app", { replace: true })
-            }, 3000)
+            }, 7000)
         }
 
     }, [socketError])

@@ -1,14 +1,21 @@
-use actix_web::{post, web, Error, Responder, HttpResponse};
-use serde::{Deserialize, Serialize};
+use crate::claim::decode_jwt;
 use crate::claim::*;
+use crate::configuration::settings::Settings;
 use crate::repository::manage::*;
 use crate::security::password_manager::*;
-use std::process::Command;
 use crate::ws::ws;
-use actix_web_grants::proc_macro::{has_any_role};
-use chrono::{Duration, Utc};
+use actix_web::{
+    dev::HttpResponseBuilder, error, http::header, http::StatusCode, post, web, Error,
+    HttpResponse, Responder, Result,
+};
+use actix_web_grants::proc_macro::has_any_role;
 use actix_web_httpauth::extractors::bearer::BearerAuth;
-use crate::claim::decode_jwt;
+use chrono::{Duration, Utc};
+use derive_more::{Display, Error};
+use serde::{Deserialize, Serialize};
+use std::process::Command;
+// use futures::Future;
+use std::future::Future;
 
 #[derive(Deserialize)]
 pub struct UserInput {
@@ -30,7 +37,7 @@ pub struct ErrorResult {
 #[derive(Deserialize, Debug)]
 pub enum Cst {
     Dd3,
-    Dd5
+    Dd5,
 }
 
 impl std::fmt::Display for Cst {
@@ -51,35 +58,61 @@ pub struct UserInputGame {
 }
 
 #[derive(Deserialize, Debug)]
+pub struct PlayerCs {
+    pub name: String,
+    pub class: String,
+    pub race: String,
+    pub particularity: String,
+    pub color: String,
+    pub avatar: String,
+    pub alignment: String,
+    pub strengh: u8,
+    pub dexterity: u8,
+    pub luck: u8,
+    pub willpower: u8,
+    pub endurance: u8,
+    pub charism: u8,
+    pub perception: u8,
+    pub education: u8,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct UserInputPlayer {
+    pub game_id: String,
+    pub jsoned_cs: String,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct GameIdInput {
     pub game_id: String,
 }
 
 #[derive(Serialize)]
 pub struct WebSocketAddress {
-    ws_address: String
+    ws_address: String,
 }
 
+#[derive(Debug, Error)]
+struct CustomError {
+    message: &'static str,
+    code: usize,
+}
 
+impl error::ResponseError for CustomError {
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::InternalServerError().json(self.to_string())
+    }
+}
 
-// #[derive(Debug)]
-// pub struct AuthError{
-//     name: &'static str,
-// }
-
-// impl std::error::Error for AuthError {
-//     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-//         Some(&self.name)
-//     }
-// }
-
-// impl std::fmt::Display for AuthError {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         write!(f, "{}", self.name)
-//     }
-// }
-
-// impl error::ResponseError for AuthError {}
+impl std::fmt::Display for CustomError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{{\"code\" : {}, \"message\": \"{}\" }}",
+            self.code, self.message
+        )
+    }
+}
 
 #[post("/register")]
 pub async fn create_token(info: web::Json<UserInput>) -> Result<HttpResponse, Error> {
@@ -87,25 +120,25 @@ pub async fn create_token(info: web::Json<UserInput>) -> Result<HttpResponse, Er
     let pass_h = hash_password(&user_info.password);
     let user_permissions = vec!["OP_GET_SECURED_INFO".to_string(), "ROLE_USER".to_string()];
 
-    let user_id = insert_new_user(&user_info.username, pass_h, (&*user_permissions).to_vec()).unwrap();
+    let user_id =
+        insert_new_user(&user_info.username, pass_h, (&*user_permissions).to_vec()).unwrap();
 
     let claims = Claims::new(user_id, user_info.username, user_permissions);
     let jwt = create_jwt(claims)?;
-    let expiration_time = (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp();
-
+    let expiration_time = (Utc::now()
+        + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap()))
+    .timestamp();
 
     Ok(HttpResponse::Ok().json(LoginResult {
         jwt,
-        expiration_time
+        expiration_time,
     }))
 }
 
-
 #[post("/login")]
-pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error>{
+pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error> {
     let user_info = info.into_inner();
     // let pass_h = hash_password(&user_info.password);
-    
 
     //TODO: this
     let user_in_database = &get_user(&user_info.username)[0];
@@ -116,29 +149,32 @@ pub async fn login(info: web::Json<UserInput>) -> Result<HttpResponse, Error>{
 
     // }
 
-
-    match verify_password(user_info.password.to_string(), user_in_database.password.to_string()) {
+    match verify_password(
+        user_info.password.to_string(),
+        user_in_database.password.to_string(),
+    ) {
         true => {
             let user_permissions = vec!["OP_GET_SECURED_INFO".to_string(), "ROLE_USER".to_string()];
-        
-            let claims = Claims::new(user_in_database.user_id.to_string(), user_info.username, user_permissions);
-            let jwt = create_jwt(claims)?;            
-            let expiration_time = (Utc::now() + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap())).timestamp();
 
+            let claims = Claims::new(
+                user_in_database.user_id.to_string(),
+                user_info.username,
+                user_permissions,
+            );
+            let jwt = create_jwt(claims)?;
+            let expiration_time = (Utc::now()
+                + Duration::hours(dotenv!("TOKEN_DURATION_TIME_HOURS").parse::<i64>().unwrap()))
+            .timestamp();
             Ok(HttpResponse::Ok().json(LoginResult {
                 jwt,
-                expiration_time
+                expiration_time,
             }))
         }
-        false => {
-            Ok(HttpResponse::Unauthorized().json(ErrorResult {
-                message: String::from("Wrong Password")
-            }))
-        }
+        false => Ok(HttpResponse::Unauthorized().json(ErrorResult {
+            message: String::from("Wrong Password"),
+        })),
     }
-
 }
-
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/player")]
@@ -146,20 +182,20 @@ pub async fn get_player(info: web::Json<GameIdInput>, credentials: BearerAuth) -
     let game_info = info.into_inner();
 
     println!("{:#?}", game_info);
-    
     let t = decode_jwt(credentials.token()).unwrap();
     let player = crate::repository::manage::get_player(t.user_id, game_info.game_id);
 
     println!("user get from db {:#?}", player);
 
-
     web::Json(player)
 }
 
-
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/create-game")]
-pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth) -> impl Responder {
+pub async fn create_game(
+    info: web::Json<UserInputGame>,
+    credentials: BearerAuth,
+) -> impl Responder {
     let game_info = info.into_inner();
 
     println!("{:#?}", game_info);
@@ -174,21 +210,27 @@ pub async fn create_game(info: web::Json<UserInputGame>, credentials: BearerAuth
 
     let t = decode_jwt(credentials.token()).unwrap();
 
-//TODO: b64 sock
-    let game_id = insert_new_game(game_info.gamename, game_info.password, t.user_id, game_info.cst, &sock);
+    //TODO: b64 sock
+    let game_id = insert_new_game(
+        game_info.gamename,
+        game_info.password,
+        t.user_id,
+        game_info.cst,
+        &sock,
+    );
 
     let cmd_argg = format!("-g{}", game_id);
     println!("game_id: {:#?}", sock);
 
     let _output = Command::new(dotenv!("WS_BINARY_PATH"))
-    .arg(cmd_args)
-    .arg(cmd_arg)
-    .arg(cmd_argg)
-    .spawn()
-    .unwrap();
+        .arg(cmd_args)
+        .arg(cmd_arg)
+        .arg(cmd_argg)
+        .spawn()
+        .unwrap();
     // .expect("failed to load socket");
 
-    web::Json(WebSocketAddress{ws_address:sock})
+    web::Json(WebSocketAddress { ws_address: sock })
 }
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
@@ -201,9 +243,74 @@ pub async fn delete_game(info: web::Json<GameIdInput>, credentials: BearerAuth) 
         Some(_) => {
             crate::repository::manage::delete_game(&game_info.game_id);
             web::Json(true)
-        },
-        None => {
-            web::Json(false)
+        }
+        None => web::Json(false),
+    }
+}
+
+#[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/create_player")]
+pub async fn create_player(
+    playerinput: web::Json<UserInputPlayer>,
+    credentials: BearerAuth,
+) -> impl Responder {
+
+    let playerinput = playerinput.into_inner();
+    let token = decode_jwt(credentials.token()).unwrap();
+
+    println!("received from player creation: {:#?}", playerinput);
+
+    let u: PlayerCs = serde_json::from_str(&playerinput.jsoned_cs).unwrap();
+
+    let s = Settings::new();
+
+    match s {
+        Ok(config) => {
+            let tmp = vec![
+                u.strengh,
+                u.dexterity,
+                u.endurance,
+                u.charism,
+                u.perception,
+                u.luck,
+                u.willpower,
+                u.education,
+            ];
+            let w: Vec<&u8> = tmp
+                .iter()
+                .filter(|s| {
+                    s > &&config.game_stats.max_per_cat || s < &&config.game_stats.min_per_cat
+                })
+                .collect();
+
+            let t: u16 = tmp.iter().map(|&b| b as u16).sum();
+
+            if !w.is_empty() || t > config.game_stats.max_stat {
+                Err(CustomError {
+                    code: 16873154,
+                    message: "Stats have been altered",
+                })
+            } else {
+                println!("Player Saved {:#?}", u);
+
+                match insert_new_player(token.user_id, playerinput.game_id, playerinput.jsoned_cs) {
+                    Ok(e) => {
+                        println!("Player id {:#?}", e);
+                        Ok(web::Json(true))
+                    }
+                    _ => Err(CustomError {
+                        code: 14567956,
+                        message: "Can´t insert into database",
+                    }),
+                }
+            }
+        }
+        Err(e) => {
+            println!("{:#?}", e);
+            Err(CustomError {
+                code: 60421676,
+                message: "ConfigurationError",
+            })
         }
     }
 }

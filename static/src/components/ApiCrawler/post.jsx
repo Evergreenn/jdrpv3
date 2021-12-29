@@ -21,11 +21,15 @@ const useApiPost = () => {
                     } else {
                         if ([403, 401].includes(response.status)) {
                             error = "You don't have access to this resource"
+                        }else if([500].includes(response.status)) {
+                            error = response.data 
+                        }else {
+                            if (response.problem) {
+                                error = response.problem
+                            }
+
                         }
 
-                        if (response.problem) {
-                            error = response.problem
-                        }
                     }
                     return { success: success, error: error }
                 })

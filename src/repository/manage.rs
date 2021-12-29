@@ -27,8 +27,17 @@ pub struct User {
 #[derive(Serialize, Debug, PartialEq, Eq)]
 pub struct Player {
     pub player_id: String,
-    pub player_cs: String,
+    pub player_cs: String
 }
+
+#[derive(Serialize, Debug, PartialEq, Eq)]
+pub struct PlayerInsert {
+    pub player_id: String,
+    pub game_id: String,
+    pub creator_id: String,
+    pub player_cs: String
+}
+
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Game {
@@ -84,6 +93,38 @@ pub fn insert_new_user(username: &String, password: String, permissions: Vec<Str
     .unwrap();
 
     Ok(user_id.to_string())
+}
+
+
+pub fn insert_new_player(creator_id: String, game_id: String, player_cs: String) -> Result<std::string::String,  Box<dyn std::error::Error>> {
+    let pool = mysql_connection();
+    let mut conn = pool.get_conn().unwrap();
+
+    let player_id = Uuid::new_v4();
+
+    let player = PlayerInsert {
+        player_id: player_id.to_string(),
+        game_id,
+        creator_id,
+        player_cs
+    };
+
+    //TODO: AddLog
+    // println!("{:#?}", user);
+
+    //TODO: check error value here
+    conn.exec_iter(
+        r"INSERT INTO player (player_id, game_id, creator_id, player_cs) VALUES (:player_id, :game_id, :creator_id, :player_cs);",
+        params! {
+            "player_id" => player.player_id,
+            "game_id" => player.game_id,
+            "creator_id" => player.creator_id,
+            "player_cs" => player.player_cs,
+        },
+    )
+    .unwrap();
+
+    Ok(player_id.to_string())
 }
 
 pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst, game_slug: &String,) -> String {
@@ -158,7 +199,7 @@ pub fn get_player(user_id: String, game_id: String) -> Option<Player> {
     let mut conn = pool.get_conn().unwrap();
 
     let mut ret = conn.exec_map(
-        "SELECT player_id, player_cs FROM player WHERE creator_id =:user_id AND game_id_ =:game_id;", 
+        "SELECT player_id, player_cs FROM player WHERE creator_id =:user_id AND game_id =:game_id;", 
         params!{
             user_id,
             game_id

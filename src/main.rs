@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate dotenv_codegen;
 
+extern crate derive_more;
+
 use actix_web::dev::ServiceRequest;
 use actix_web::{http, web, App, Error, HttpServer};
 
@@ -18,6 +20,7 @@ mod repository;
 mod routes;
 mod security;
 mod ws;
+mod configuration;
 
 use crate::routes::get::*;
 use crate::routes::post::*;
@@ -65,6 +68,7 @@ async fn main() -> std::io::Result<()> {
                     .service(crate::routes::post::delete_game)
                     .service(get_game_from_user_id)
                     .service(crate::routes::post::get_player)
+                    .service(create_player)
             )
     })
     .bind(dotenv!("API_URL"))?

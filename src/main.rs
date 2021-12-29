@@ -69,6 +69,7 @@ async fn main() -> std::io::Result<()> {
                     .service(get_game_from_user_id)
                     .service(crate::routes::post::get_player)
                     .service(create_player)
+                    .service(crate::routes::post::get_socket_address)
             )
     })
     .bind(dotenv!("API_URL"))?

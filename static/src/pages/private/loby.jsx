@@ -7,7 +7,7 @@ import CreatePlayer from "./createplayer";
 
 export default function Lobby({ authenticated }) {
 
-    const [gameaddress, SetGameAddress] = useState("");
+    const [gameId, SetGameId] = useState("");
     const [haveAPlayer, setHaveAPlayer] = useState("");
     const [gamepwd, SetGamepwd] = useState("");
     const [error, SetError] = useState("");
@@ -22,7 +22,7 @@ export default function Lobby({ authenticated }) {
 
     const handleChangeName = e => {
         e.preventDefault();
-        SetGameAddress(e.target.value);
+        SetGameId(e.target.value);
     }
 
     const handleChangePassword = e => {
@@ -35,7 +35,7 @@ export default function Lobby({ authenticated }) {
         setLoaded(false);
 
         const response = await postData("api/player", {
-            "game_id": gameaddress,
+            "game_id": gameId,
             // "password": password,
         });
 
@@ -74,7 +74,7 @@ export default function Lobby({ authenticated }) {
 
     if (haveAPlayer === false) {
         return (
-            <CreatePlayer gameId={gameaddress}/>
+            <CreatePlayer gameId={gameId}/>
         )
     }
 
@@ -89,7 +89,7 @@ export default function Lobby({ authenticated }) {
                         <form onSubmit={handleSubmit} autoComplete="off">
                             <label>
                                 Game Id :
-                                <input type="text" autoComplete="off" value={gameaddress} onChange={handleChangeName} /> </label>
+                                <input type="text" autoComplete="off" value={gameId} onChange={handleChangeName} /> </label>
                             {/* <input className="pull-right" type="submit" value="Submit" /> */}
                             <label>
                                 Game Password :

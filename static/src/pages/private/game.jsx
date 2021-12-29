@@ -37,6 +37,8 @@ export default function Game() {
         onError: (e) => { console.log(e) },
         shouldReconnect: (closeEvent) => false,
         onClose: (e) => {
+            document.getElementById("main-nav").classList.remove("hide")
+
 
             //TODO: add a message for letting the user know that the mj closed the game.
             console.log(e)
@@ -52,6 +54,7 @@ export default function Game() {
             if (message.is_admin == true) {
 
                 if (message.from === "Console") {
+                    console.log("yy")
                     setIsSocketCreator(true);
                 } else {
                     message.date = new Date(message.date).toISOString().substr(11, 8)
@@ -77,9 +80,17 @@ export default function Game() {
 
     useEffect(() => {
 
-        return (
-            <UserView username={token_decoded.username} />
-        )
+        if(!isSocketCreator){
+
+
+
+
+
+            return (
+                <UserView username={token_decoded.username} />
+            )
+        }
+
 
     }, [isSocketCreator])
 
@@ -135,9 +146,9 @@ export default function Game() {
 
                 {/* <button onClick={handleOnClick}>test</button> */}
 
-                {/* {!isSocketCreator &&
+                {!isSocketCreator &&
                     <UserView username={token_decoded.username} />
-                } */}
+                }
 
                 {readyState != ReadyState.OPEN &&
                     <Loader />

@@ -246,6 +246,22 @@ pub fn delete_game(game_id: &String)-> bool {
     true
 }
 
+pub fn get_socket_address(game_id: &String) -> Option<String> {
+
+    let pool = mysql_connection();
+    let mut conn = pool.get_conn().unwrap();
+ 
+    let ret: Option<String> = conn.exec_first(
+        "SELECT game_slug FROM game WHERE game_id=:game_id;", 
+        params!{
+            "game_id" => game_id.to_string()
+        }).unwrap();
+
+        println!("socket address retrive from db: {:#?} with game id: {}", ret, game_id);
+
+        ret
+}
+
 pub fn is_user_creator_of_game(user_id: String, game_id: &String) -> Option<u8> {
 
     let pool = mysql_connection();

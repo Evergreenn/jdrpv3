@@ -249,6 +249,29 @@ pub async fn delete_game(info: web::Json<GameIdInput>, credentials: BearerAuth) 
 }
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/socket-address")]
+pub async fn get_socket_address(info: web::Json<GameIdInput>, credentials: BearerAuth) -> impl Responder {
+    let game_info = info.into_inner();
+    let t = decode_jwt(credentials.token()).unwrap();
+
+    match crate::repository::manage::get_socket_address(&game_info.game_id){
+        Some(e) => {
+            println!("socket of game id: {:#?}  : {:#?}",game_info.game_id, e);
+
+            Ok(web::Json(e))
+        },
+        None => {
+            Err(CustomError {
+                code: 1376854,
+                message: "Game is ghosted",
+            })
+        }
+    }
+
+
+}
+
+#[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/create_player")]
 pub async fn create_player(
     playerinput: web::Json<UserInputPlayer>,

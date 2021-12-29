@@ -239,13 +239,24 @@ const CreatePlayer = ({ gameId }) => {
                     if(JSON.parse(response.success) === true ){
                         setError({ level: "success", message: "Player created, you will be connect to the game in a second" })
 
-
-                        const to64 = btoa(response.success.ws_address);
-
-                        navigate({
-                            pathname: `/game/${to64}`,
-                            //   search: `?args=`,
+                        const response = await postData("api/socket-address", {
+                            "game_id": gameId
                         });
+
+                        if(!response.success){
+                            const err = JSON.parse(response.error);
+                            setError({ level: "error", message:  err.message + " - error code: "+ err.code})
+                            setIsSubbmitted(false);
+                        }else {
+                            console.log(response.success);
+                            const to64 = btoa(response.success);
+    
+                            navigate({
+                                pathname: `/game/${to64}`,
+                                //   search: `?args=`,
+                            });
+
+                        }
                     }else {
                         setIsSubbmitted(false);
 

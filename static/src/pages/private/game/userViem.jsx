@@ -39,8 +39,10 @@ const UserView = ({ username }) => {
                 <TabPanel>
                     <h2>Any content 1</h2>
                     <div className="container">
-                        <div className="card">
-                            <Cs />
+                        <div className="row">
+                            <div className="col">
+                                <Cs />
+                            </div>
                         </div>
                     </div>
                 </TabPanel>

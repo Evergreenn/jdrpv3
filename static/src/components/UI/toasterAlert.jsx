@@ -26,7 +26,7 @@ const ToasterAlert = ({ level, message }) => {
     } else if (level === "error") {
         return (
             <div ref={toasterRef} class="wrapper">
-                <div class="toast error">
+                <div class="toast errortoast">
                     <div class="outer-container"> <i class="fas fa-times-circle"></i> </div>
                     <div class="inner-container">
                         <p>Error</p>

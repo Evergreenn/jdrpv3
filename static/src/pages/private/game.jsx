@@ -9,6 +9,7 @@ import UserView from "./game/userViem";
 import ToasterAlert from "../../components/UI/toasterAlert";
 import useApiPost from "../../components/ApiCrawler/post";
 import Cs from "../../components/game/jdrp/cs";
+import AdminView from "./game/adminView";
 
 export default function Game() {
 
@@ -48,7 +49,6 @@ export default function Game() {
             //TODO: add a message for letting the user know that the mj closed the game.
             console.log(e)
             // setSocketError(true)
-            // setPlayersDashboard([])
         },
         queryParams: queryParams
     }, true);
@@ -96,7 +96,6 @@ export default function Game() {
 
                     }
 
-
                 } else {
                     message.date = new Date(message.date).toISOString().substr(11, 8)
                     setadminMessageHistory(prev => prev.concat(message));
@@ -118,8 +117,6 @@ export default function Game() {
         }
 
     }, [socketError])
-
-
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
@@ -149,15 +146,18 @@ export default function Game() {
     return (
         <>
             <div>
+
+
+                {isSocketCreator &&
+                    <AdminView playersDashboard={playersDashboard} />
+                }
+
+                {!isSocketCreator &&
+                    <UserView user_id={token_decoded.user_id} game_id={gameID} />
+                }
+
                 <div className="navigation-right">
-                    {isSocketCreator &&
-                        <>
-                            <a className="button dark outline ">Button#1</a>
-                            <a className="button dark outline ">Button#1</a>
-                            <a className="button dark outline ">Button#1</a>
-                        </>
-                    }
-                    <a onClick={handledisplayClick} className="button outline dark" id="clicker">⚙️
+                    <a onClick={handledisplayClick} className="button outline dark settings" id="clicker">⚙️
                         {notifications > 0 && <span className="badge">{notifications}</span>}
                     </a>
                     <div className="panel-wrap">
@@ -165,28 +165,7 @@ export default function Game() {
                             <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
                         </div>
                     </div>
-
                 </div>
-
-                {isSocketCreator &&
-                    <div className="container">
-                        <h1></h1>
-                        <div className="row">
-                            {playersDashboard.map((el, idx) => {
-                                return (<div className="col">
-                                    <Cs key={idx} player_cs={el} />
-                                </div>)
-                            })}
-                        </div>
-                    </div>
-
-                }
-
-                {/* <button onClick={handleOnClick}>test</button> */}
-
-                {!isSocketCreator &&
-                    <UserView user_id={token_decoded.user_id} game_id={gameID} />
-                }
 
                 {readyState != ReadyState.OPEN && loaded &&
                     <Loader />

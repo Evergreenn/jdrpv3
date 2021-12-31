@@ -1,12 +1,16 @@
 .react-tabs__tab-list {
     border-bottom: solid 1px var(--color-darkGrey);
-    margin: 0 0 10px;
+    margin: 0 0 30px;
     padding: 0;
+    width:100%;
+    text-align: center;
+
 }
 
 .react-tabs__tab {
     display: inline-block;
-    width: 25%;
+    position: relative;
+    /* width: 25%; */
     text-align: center;
     list-style: none;
     padding: 28.2px;

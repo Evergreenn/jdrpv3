@@ -3,6 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Loader from "../../../components/UI/loader";
 import Cs from "../../../components/game/jdrp/cs";
 import useApiPost from "../../../components/ApiCrawler/post";
+import Maps from "../../../components/game/jdrp/Ui/map";
 
 const UserView = ({ user_id, game_id }) => {
     const [loaded, setLoaded] = useState(false);
@@ -16,11 +17,11 @@ const UserView = ({ user_id, game_id }) => {
         document.getElementById("main-nav").classList.add("hide")
     }
 
-    const {postData} = useApiPost();
+    const { postData } = useApiPost();
 
-    useEffect( async () => {
+    useEffect(async () => {
         hideMainMenu();
-        
+
         const response = await postData("api/playertokened", {
             "game_id": game_id,
             "user_id": user_id,
@@ -58,13 +59,14 @@ const UserView = ({ user_id, game_id }) => {
                 </TabList>
 
                 <TabPanel>
-                    <h2>Any content 1</h2>
-                    <div className="container">
+                    <div className="">
                         <div className="row">
-                            <div className="col">
+                            <div className="col-4">
                                 <Cs player_cs={playerCs} />
                             </div>
-                        <div className="col"></div>
+                            <div className="col-8">
+                                <Maps />
+                            </div>
                         </div>
                     </div>
                 </TabPanel>

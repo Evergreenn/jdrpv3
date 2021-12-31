@@ -10,3 +10,24 @@
     margin-top: 5px;
     margin-right: 5px;
 }
+
+
+.navigation-right-admin {
+    position: absolute;
+    bottom: 43px;
+    right: 0;
+}
+
+.navigation-right-admin>.button {
+    display: block;
+    margin-left: 0;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+.settings {
+
+    padding-right: 55px;
+    padding-left: 55px;
+
+}

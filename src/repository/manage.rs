@@ -198,6 +198,8 @@ pub fn get_player(user_id: String, game_id: String) -> Option<Player> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
+    println!("SELECT player_id, player_cs FROM player WHERE creator_id ={} AND game_id ={};", user_id, game_id);
+
     let mut ret = conn.exec_map(
         "SELECT player_id, player_cs FROM player WHERE creator_id =:user_id AND game_id =:game_id;", 
         params!{

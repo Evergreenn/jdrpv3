@@ -87,9 +87,16 @@ pub struct GameIdInput {
     pub game_id: String,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct GetPlayerInput {
+    pub game_id: String,
+    pub user_id: String,
+}
+
 #[derive(Serialize)]
 pub struct WebSocketAddress {
     ws_address: String,
+    game_id: String,
 }
 
 #[derive(Debug, Error)]
@@ -190,6 +197,21 @@ pub async fn get_player(info: web::Json<GameIdInput>, credentials: BearerAuth) -
     web::Json(player)
 }
 
+//TODO: reformat this
+#[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/playertokened")]
+pub async fn get_playertokened(info: web::Json<GetPlayerInput>, credentials: BearerAuth) -> impl Responder {
+    let game_info = info.into_inner();
+
+    println!("{:#?}", game_info);
+    // let t = decode_jwt(credentials.token()).unwrap();
+    let player = crate::repository::manage::get_player(game_info.user_id, game_info.game_id);
+
+    println!("user get from db {:#?}", player);
+
+    web::Json(player)
+}
+
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/create-game")]
 pub async fn create_game(
@@ -230,7 +252,7 @@ pub async fn create_game(
         .unwrap();
     // .expect("failed to load socket");
 
-    web::Json(WebSocketAddress { ws_address: sock })
+    web::Json(WebSocketAddress { game_id: game_id , ws_address: sock })
 }
 
 #[has_any_role("ADMIN", "MDJ", "USER")]

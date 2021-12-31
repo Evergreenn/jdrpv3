@@ -42,7 +42,9 @@ export default function GameCreator({ authenticated }) {
             SetError(response.error);
         } else {
 
-            const to64 = btoa(response.success.ws_address);
+            console.log(response.success)
+
+            const to64 = btoa(JSON.stringify(response.success));
 
             navigate({
                 pathname: `/game/${to64}`,

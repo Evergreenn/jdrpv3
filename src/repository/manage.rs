@@ -219,18 +219,36 @@ pub fn get_player(user_id: String, game_id: String) -> Option<Player> {
 
 }
 
-pub fn get_game(user_id: &String)-> Vec<GamePublic> {
+pub fn get_game(user_id: &String, page: u16)-> Vec<GamePublic> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
+    let offset = page * 5u16;
+
     let ret = conn.exec_map(
-        "SELECT game_id, game_name, game_type, game_slug, created_at FROM game WHERE creator_id=:user_id;", 
+        "SELECT game_id, game_name, game_type, game_slug, created_at FROM game WHERE creator_id=:user_id LIMIT 5 OFFSET :offset;", 
         params!{
-            "user_id" => user_id
+            "user_id" => user_id,
+            "offset" => offset
         }, 
     |(game_id, game_name, game_type, game_slug, created_at)| {
         GamePublic{game_id, game_name, game_type, game_slug, created_at}
     }).unwrap();
+
+    ret
+}
+
+pub fn get_count_game(user_id: &String)-> Option<u16> {
+    let pool = mysql_connection();
+    let mut conn = pool.get_conn().unwrap();
+
+    let ret: Option<u16> = conn.exec_first(
+        "SELECT COUNT(*) FROM game WHERE creator_id=:user_id;", 
+        params!{
+            "user_id" => user_id,
+        }).unwrap();
+
+        println!("count {:#?} for user_id: {}", ret, user_id);
 
     ret
 }

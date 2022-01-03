@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import useApiGet from '../../components/ApiCrawler/get';
+// import useApiGet from '../../components/ApiCrawler/get';
 import useApiPost from '../../components/ApiCrawler/post';
-import Loader from '../../components/UI/loader';
 import { useNavigate } from "react-router-dom";
+import Pagination from '../../components/UI/pagination';
+import Loader from '../../components/UI/loader';
 
 
 
 export default function PageApp({ authenticated }) {
 
     const [games, setGames] = useState([]);
-    const [loaded, setLoaded] = useState(false);
-    const { getData } = useApiGet();
+    const [loaded, setLoaded] = useState(true);
+    // const { getData } = useApiGet();
     const { postData } = useApiPost();
     const navigate = useNavigate();
+    // const [loaded, setLoaded] = useState(false);
 
 
-    useEffect(async () => {
+    // useEffect( () => {
 
-        const response = await getData("api/get-user-game");
 
-        if (response.success) {
-            setGames(response.success);
-            setLoaded(true);
-        }
-    }, [loaded]);
+    // }, [loaded]);
 
     const handleClick = (slug) => {
         const to64 = btoa(slug);
@@ -39,7 +36,6 @@ export default function PageApp({ authenticated }) {
         postData("api/delete-game", {
             "game_id": gameId
         })
-        setLoaded(false);
     }
 
     return (
@@ -88,39 +84,15 @@ export default function PageApp({ authenticated }) {
                             </div>
                         </div>
                     </div>
-                    {!loaded &&
-                        <Loader />
-                    }
-                    {loaded && games.length > 0 &&
 
+                    <div className="container">
+                        <h1 className="is-center">Your games</h1>
+                        <p className="text-dark is-center"> Delete a game will erase all data related to it and all progression will be lost. This should be taked seriously.</p>
 
-                        <div className="container">
-                            <h1 className="is-center">Your games</h1>
-                            <p className="text-dark is-center"> Delete a game will erase all data related to it and all progression will be lost. This should be taked seriously.</p>
+                        <Pagination handleRemoveClick={handleRemoveClick} handleClick={handleClick} />
 
-                            {games
-                                .map((data, idx) =>
-                                    <div className="row">
-                                        <div className="col ">
-                                            <div className="card">
-                                                <table>
-                                                    <tr key={idx}>
-                                                        <td className="text-center">{data.game_name}</td>
-                                                        <td className="text-center">{data.game_type}</td>
-                                                        <td className="text-center">{data.created_at}</td>
-                                                        <td className="text-center">
-                                                            <a className="button primary" onClick={() => handleClick(data.slug)}> Launch</a>
-                                                            <a className="button error" onClick={() => handleRemoveClick(data.game_id)}> Delete</a>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        </div>
-                    }
+                    </div>
+
                 </>
             }
         </>

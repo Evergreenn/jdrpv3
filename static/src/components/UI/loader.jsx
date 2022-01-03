@@ -1,4 +1,4 @@
-import React, { render } from "react";
+import React from "react";
 
 const Loader = () => {
     return (

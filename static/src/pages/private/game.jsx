@@ -45,7 +45,6 @@ export default function Game() {
         onClose: (e) => {
             document.getElementById("main-nav").classList.remove("hide")
 
-
             //TODO: add a message for letting the user know that the mj closed the game.
             console.log(e)
             // setSocketError(true)
@@ -146,8 +145,6 @@ export default function Game() {
     return (
         <>
             <div>
-
-
                 {isSocketCreator &&
                     <AdminView playersDashboard={playersDashboard} />
                 }

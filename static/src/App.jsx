@@ -14,6 +14,8 @@ import GameCreator from './pages/private/creategame';
 import Game from './pages/private/game';
 import ShareGame from './pages/private/sharegame';
 import Lobby from './pages/private/loby';
+import { ToastContainer, Slide } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
 
@@ -81,6 +83,21 @@ const App = () => {
           }
         </Routes>
       </BrowserRouter>
+
+      {/* TODO: Get the class of the body to theme the toaster */}
+      <ToastContainer
+      position="bottom-center"
+      theme="dark"
+      transition={Slide}
+      autoClose={4000}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss={false}
+      draggable
+      pauseOnHover
+      />
     </>
 
   )

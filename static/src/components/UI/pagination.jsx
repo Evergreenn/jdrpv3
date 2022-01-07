@@ -17,10 +17,8 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
 
         const response = await getData("api/get-user-game-counted");
         setTotalGames(response.success)
-        const test = parseInt(Math.ceil(response.success) / 5);
+        const test = Math.ceil(response.success / 5);
         setPageCount(test);
-
-        // setLoader(true)
 
     }, [loader])
 
@@ -60,7 +58,8 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
 
         return (
             <>
-            {totalGames}
+                <h1 className="is-center">Your games ({totalGames}) </h1>
+                <p className="text-dark is-center"> Delete a game will erase all data related to it and all progression will be lost. This should be taked seriously.</p>
                 {currentItems && currentItems
                     .map((data, idx) =>
                         <div className="row">
@@ -119,7 +118,7 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
                             renderOnZeroPageCount={null}
                         />
                     </div>
-                    
+
                 </>
             }
         </>

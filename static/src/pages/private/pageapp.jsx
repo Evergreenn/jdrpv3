@@ -86,9 +86,7 @@ export default function PageApp({ authenticated }) {
                     </div>
 
                     <div className="container">
-                        <h1 className="is-center">Your games</h1>
-                        <p className="text-dark is-center"> Delete a game will erase all data related to it and all progression will be lost. This should be taked seriously.</p>
-
+                      
                         <Pagination handleRemoveClick={handleRemoveClick} handleClick={handleClick} />
 
                     </div>

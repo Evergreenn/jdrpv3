@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import WebSocketStatus from "../../components/UI/websocketsatuts";
 import Cookies from "universal-cookie"
 import UserView from "./game/userViem";
-import ToasterAlert from "../../components/UI/toasterAlert";
 import useApiPost from "../../components/ApiCrawler/post";
 import Cs from "../../components/game/jdrp/cs";
 import AdminView from "./game/adminView";
@@ -32,6 +31,64 @@ export default function Game() {
     const queryParams = {
         'token': token
     };
+
+    const [toSet, setToSet] = useState([]);
+
+
+    const PlayerConnectionEvent = async message => {
+        const data = JSON.parse(message.message);
+
+        //TODO: change this DDOS
+        const response = await postData("api/playertokened", {
+            "game_id": data.game_id,
+            "user_id": data.user_id,
+        });
+
+        if (!response.success) {
+
+        } else {
+
+            const toaddd = { ...JSON.parse(response.success.player_cs), player_id: response.success.player_id };
+
+            if (undefined === playersDashboard.find(item => toaddd.player_id === item.player_id)) {
+                setPlayersDashboard(Prev => Prev.concat(toaddd));
+            }
+
+        }
+    }
+
+    const PlayerLeaveEvent = async message => {
+        const data = JSON.parse(message.message);
+
+        //TODO: change this DDOS
+        const response = await postData("api/playertokened", {
+            "game_id": data.game_id,
+            "user_id": data.user_id,
+        });
+
+        if (!response.success) {
+
+        } else {
+
+            console.log("all players", playersDashboard);
+            console.log("id to remove", response.success.player_id);
+
+            const idxToRemove = playersDashboard.findIndex(item => item.player_id === response.success.player_id);
+            // console.log("new array of players", NewPlayerDashboard);
+            playersDashboard.splice(idxToRemove, 1);
+            const toset = playersDashboard;
+            console.log(toset)
+            setToSet(toset);
+
+            console.log("player dashboard after being set", playersDashboard)
+        }
+    }
+
+    useEffect(() => {
+
+        setPlayersDashboard(toSet);
+
+    }, [toSet])
 
     const {
         sendMessage,
@@ -68,41 +125,33 @@ export default function Game() {
         if (lastMessage !== null) {
             let message = JSON.parse(lastMessage.data);
 
+            // console.log(message)
+
+            if (message.from === "Game") {
+                switch (message.scope){
+                    case "PlayerConnection":
+                        PlayerConnectionEvent(message)
+                    break;
+                    case "PlayerLeave":
+                        PlayerLeaveEvent(message)
+                    break;
+                }
+
+            }
 
             if (message.is_admin == true) {
 
                 if (message.from === "Console") {
                     setIsSocketCreator(true);
-                } else if (message.from === "Game") {
-
-                    const data = JSON.parse(message.message);
-
-                    //TODO: change this DDOS
-                    const response = await postData("api/playertokened", {
-                        "game_id": data.game_id,
-                        "user_id": data.user_id,
-                    });
-
-                    if (!response.success) {
-
-                    } else {
-
-                        const toaddd = { ...JSON.parse(response.success.player_cs), player_id: response.success.player_id };
-
-                        if (undefined === playersDashboard.find(item => toaddd.player_id === item.player_id)) {
-                            setPlayersDashboard(Prev => Prev.concat(toaddd));
-                        }
-
-                    }
-
                 } else {
                     message.date = new Date(message.date).toISOString().substr(11, 8)
                     setadminMessageHistory(prev => prev.concat(message));
                     setNotifications(notifications => notifications + 1);
                 }
-            } else {
-                setMessageHistory(prev => prev.concat(message));
-            }
+            } 
+            // else {
+            //     setMessageHistory(prev => prev.concat(message));
+            // }
         }
     }, [lastMessage, setMessageHistory, setadminMessageHistory]);
 
@@ -166,10 +215,6 @@ export default function Game() {
 
                 {readyState != ReadyState.OPEN && loaded &&
                     <Loader />
-                }
-
-                {socketError &&
-                    <ToasterAlert level="error" message="The MJ close the connection. You are going to be redirected" />
                 }
 
                 {readyState == ReadyState.OPEN &&

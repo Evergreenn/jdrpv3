@@ -30,7 +30,7 @@ const AdminView = ({ playersDashboard }) => {
                     <div className="container">
                         <div className="row">
                             {playersDashboard.length > 0 && playersDashboard.map((el, idx) => {
-                                return (<div className="col">
+                                return (<div className="col " style={{borderLeft: "solid "+`${el.color}`}}>
                                     <Cs key={idx} player_cs={el} />
                                 </div>)
                             })}
@@ -42,7 +42,7 @@ const AdminView = ({ playersDashboard }) => {
 
                 </TabPanel>
                 <TabPanel>
-                        <Maps />
+                    <Maps />
                 </TabPanel>
                 <TabPanel>
                     <h2>Any content 2</h2>

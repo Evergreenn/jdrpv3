@@ -5,7 +5,8 @@ import statsRules from '../../data/jdrp/stats.json'
 import classRules from '../../data/jdrp/classes.json'
 import raceRules from '../../data/jdrp/races.json'
 import csRules from '../../data/jdrp/character_creation_rules.json'
-import ToasterAlert from "../../components/UI/toasterAlert";
+import { toast } from 'react-toastify';
+
 import useApiPost from "../../components/ApiCrawler/post";
 
 
@@ -233,11 +234,11 @@ const CreatePlayer = ({ gameId }) => {
 
                 if(!response.success){
                     const err = JSON.parse(response.error);
-                    setError({ level: "error", message:  err.message + " - error code: "+ err.code})
+                    toast.error(err.message + " - error code: "+ err.code)
                     setIsSubbmitted(false);
                 }else {
                     if(JSON.parse(response.success) === true ){
-                        setError({ level: "success", message: "Player created, you will be connect to the game in a second" })
+                        toast.success("Player created, you will be connect to the game in a second")
 
                         const response = await postData("api/socket-address", {
                             "game_id": gameId
@@ -245,10 +246,10 @@ const CreatePlayer = ({ gameId }) => {
 
                         if(!response.success){
                             const err = JSON.parse(response.error);
-                            setError({ level: "error", message:  err.message + " - error code: "+ err.code})
+                            toast.error(err.message + " - error code: "+ err.code)
+
                             setIsSubbmitted(false);
                         }else {
-                            console.log(response.success);
                             const to64 = btoa(JSON.stringify({game_id: gameId, ws_address:response.success}));
     
                             navigate({
@@ -261,6 +262,8 @@ const CreatePlayer = ({ gameId }) => {
                         setIsSubbmitted(false);
 
                         console.log(response.error)
+                        toast.error("Can't create player")
+
                         setError({ level: "error", message: "Can't create player" })
                     }
 
@@ -541,9 +544,7 @@ const CreatePlayer = ({ gameId }) => {
                     </div>
                 </form>
             </div>
-            {error &&
-                <ToasterAlert level={error.level} message={error.message} />
-            }
+
 
         </>
     )

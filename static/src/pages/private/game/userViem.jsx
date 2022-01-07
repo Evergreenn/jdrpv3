@@ -61,7 +61,7 @@ const UserView = ({ user_id, game_id }) => {
                 <TabPanel>
                     <div className="">
                         <div className="row">
-                            <div className="col-4">
+                            <div className="col-4" style={{borderLeft: "solid "+`${playerCs.color}`, height: "100%"}}>
                                 <Cs player_cs={playerCs} />
                             </div>
                             <div className="col-8">

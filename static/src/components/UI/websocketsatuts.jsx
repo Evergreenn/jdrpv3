@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { renderMatches } from "react-router";
 import DarkMode from "./darkmode";
-
+import { toast } from 'react-toastify';
 
 const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
 
@@ -16,6 +17,13 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
 
     const onHandleOnClickClose = e => {
         handleOnClickClose(e);
+    }
+
+
+    const onClickCopy = (e, id) => {
+
+        navigator.clipboard.writeText(id)
+        toast.success("Copied !");
     }
 
     return (
@@ -42,7 +50,17 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
                     </div>
                     <div className="card web">
                         {AdminMessage
-                            .map((message, idx) => <p key={idx}>{message.date}: {message ? message.message : null}</p>)}
+                            .map((message, idx) => 
+                            {
+                                if(message.message.includes("give this id to your players")){
+                                    const splited = message.message.split("give this id to your players: ");
+
+                                    return <p key={idx}>{message.date}: give this id to your players: {splited[1]} <span id="ccopy" onClick={e => {onClickCopy(e, splited[1])}} className="tag is-small">click me to copy</span></p>
+                                }else {
+                                    return <p key={idx}>{message.date}: {message ? message.message : null}</p>
+                                }
+                            
+                            })}
                     </div>
                 </div>
             </div>

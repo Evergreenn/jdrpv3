@@ -223,7 +223,7 @@ pub fn get_game(user_id: &String, page: u16)-> Vec<GamePublic> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
-    let offset = page * 5u16;
+    let offset = (page -1) * 5u16;
 
     let ret = conn.exec_map(
         "SELECT game_id, game_name, game_type, game_slug, created_at FROM game WHERE creator_id=:user_id LIMIT 5 OFFSET :offset;", 

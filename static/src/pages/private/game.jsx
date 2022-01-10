@@ -37,7 +37,6 @@ export default function Game() {
     const rollMessage = {
         user_id: "",
         stat_rolled: "",
-        
     };
 
 
@@ -185,8 +184,11 @@ export default function Game() {
 
     const onHandleRolls = () => {
 
+        rollMessage.user_id = "";
+        rollMessage.stat_rolled = "";
 
-        
+        const jsoned = JSON.stringify(rollMessage);
+        sendMessage(jsoned);
     }
 
 

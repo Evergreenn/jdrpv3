@@ -4,7 +4,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Maps from "../../../components/game/jdrp/Ui/map";
 import Loader from "../../../components/UI/loader";
 
-const AdminView = ({ playersDashboard }) => {
+const AdminView = ({ playersDashboard, onHandleRolls }) => {
 
     const hideMainMenu = () => {
         document.getElementById("main-nav").classList.add("hide")
@@ -44,7 +44,7 @@ const AdminView = ({ playersDashboard }) => {
                         <div className="row">
                             {internalDashboard.length > 0 && internalDashboard.map((el, idx) => {
                                 return (<div className="col " style={{borderLeft: "solid "+`${el.color}`}}>
-                                    <Cs key={el.player_id} player_cs={el} isAdmin={true} />
+                                    <Cs key={el.player_id} player_cs={el} isAdmin={true} onHandleRolls={onHandleRolls} />
                                 </div>)
                             })}
                             {internalDashboard.length === 0 &&

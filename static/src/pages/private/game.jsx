@@ -37,6 +37,7 @@ export default function Game() {
     const rollMessage = {
         user_id: "",
         stat_rolled: "",
+        type: "roll"
     };
 
 
@@ -139,9 +140,21 @@ export default function Game() {
                 }
             }
 
-            // else {
-            //     setMessageHistory(prev => prev.concat(message));
-            // }
+            else {
+                console.log(message)
+                const msg = JSON.parse(message.message);
+
+                if (msg.type === "roll") {
+                    //TODO: DO THIS IN THE WEBSOCKET
+                    const roll = Math.floor(Math.random() * (101 - 1) + 1);
+                    toast.info(msg.player_id + " has rolled the dice for: "+ msg.stat_rolled+" roll result: "+ roll, {
+                        autoClose: 10000,
+                        style:{width: "300px", height: "300px"}
+                    });
+                }
+
+                // setMessageHistory(prev => prev.concat(message));
+            }
         }
     }, [lastMessage, setMessageHistory, setadminMessageHistory]);
 
@@ -182,12 +195,14 @@ export default function Game() {
     }, []);
 
 
-    const onHandleRolls = () => {
+    const onHandleRolls = (player_id, stat_rolled) => {
 
-        rollMessage.user_id = "";
-        rollMessage.stat_rolled = "";
+        rollMessage.player_id = player_id;
+        rollMessage.stat_rolled = stat_rolled;
 
         const jsoned = JSON.stringify(rollMessage);
+
+        console.log(jsoned);
         sendMessage(jsoned);
     }
 
@@ -205,11 +220,11 @@ export default function Game() {
 
 
                 {isSocketCreator && loaded &&
-                    <AdminView playersDashboard={playersDashboard} />
+                    <AdminView playersDashboard={playersDashboard} onHandleRolls={onHandleRolls} />
                 }
 
                 {!isSocketCreator && loaded &&
-                    <UserView user_id={token_decoded.user_id} game_id={gameID} />
+                    <UserView user_id={token_decoded.user_id} game_id={gameID} onHandleRolls={onHandleRolls} />
                 }
 
                 <div className="navigation-right">

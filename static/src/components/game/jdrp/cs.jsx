@@ -3,7 +3,7 @@ import StatsCard from "./Ui/StatsCard";
 import Loader from "../../UI/loader";
 import DiceRoll from "../../../pages/private/game/diceRoll";
 
-const Cs = ({ player_cs, isAdmin }) => {
+const Cs = ({ player_cs, isAdmin, onHandleRolls }) => {
 
     const [strengh, setStrengh] = useState(0);
     const [dexterity, setDexterity] = useState(0);
@@ -59,7 +59,6 @@ luck": 45,
 } 
 */}
 
-            {/* <div className="" style={{ paddingLeft: 0, marginLeft: 0, paddingTop: 0, paddingRight: 0, marginRight: 0 }}> */}
                 <div className="row" style={{ paddingLeft: 0, marginLeft: 0, paddingRight: 0, marginRight: 0 }}>
                     <div className="col-12" style={{flex: "0 0 100%", maxWidth:"100%", paddingLeft: 0, marginLeft: 0, paddingRight: 0, marginRight: 0, background: "linear-gradient(to right, " + `${statsArr.color}` + ", white)" }}>
                         <div className="pull-right">
@@ -83,11 +82,10 @@ luck": 45,
                     </div>
                 </div>
 
-            {/* </div> */}
             {stats.map((stats, idx) =>
                 <div className="" key={idx}>
                     <StatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
-                    <DiceRoll statLabel={stats.label} stat={statsArr[stats.label]} isAdmin={isAdmin}/>
+                    <DiceRoll playerId={statsArr.player_id} onHandleRolls={onHandleRolls} stat={statsArr[stats.label]} isAdmin={isAdmin}/>
                 </div>
             )}
         </>

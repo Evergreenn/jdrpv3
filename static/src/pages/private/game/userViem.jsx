@@ -5,7 +5,7 @@ import Cs from "../../../components/game/jdrp/cs";
 import useApiPost from "../../../components/ApiCrawler/post";
 import Maps from "../../../components/game/jdrp/Ui/map";
 
-const UserView = ({ user_id, game_id }) => {
+const UserView = ({ user_id, game_id,  onHandleRolls}) => {
     const [loaded, setLoaded] = useState(false);
     // const [displayName, setDisplayname] = useState("lul");
     const [playerCs, setPlayerCs] = useState({});
@@ -27,14 +27,11 @@ const UserView = ({ user_id, game_id }) => {
             "user_id": user_id,
         });
 
-        console.log(response);
-
         if (!response.success) {
 
         } else {
-            console.log(response.success);
 
-            setPlayerCs(JSON.parse(response.success.player_cs));
+            setPlayerCs({ ...JSON.parse(response.success.player_cs), player_id: response.success.player_id });
             setLoaded(true);
         }
 
@@ -60,7 +57,7 @@ const UserView = ({ user_id, game_id }) => {
                     <div className="">
                         <div className="row">
                             <div className="col-4" style={{borderLeft: "solid "+`${playerCs.color}`, height: "100%"}}>
-                                <Cs player_cs={playerCs} isAdmin={false} />
+                                <Cs player_cs={playerCs} isAdmin={false} onHandleRolls={onHandleRolls} />
                             </div>
                             <div className="col-8">
                                 <Maps />

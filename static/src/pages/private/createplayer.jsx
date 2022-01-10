@@ -490,6 +490,7 @@ const CreatePlayer = ({ gameId }) => {
                                     <option value="1">1</option>
                                     <option value="5">5</option>
                                     <option value="20">20</option>
+                                    <option value="40">40</option>
                                 </select>
                             </label>
                         </div>

@@ -1,22 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Cs from "../../../components/game/jdrp/cs";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Maps from "../../../components/game/jdrp/Ui/map";
-
+import Loader from "../../../components/UI/loader";
 
 const AdminView = ({ playersDashboard }) => {
 
     const hideMainMenu = () => {
         document.getElementById("main-nav").classList.add("hide")
     }
+
+    const [internalDashboard, setInternalDashboard] = useState([]);
+    const [loaded, setLoaded] = useState(false);
+
     useEffect(() => {
         hideMainMenu()
 
     }, [])
 
+    useEffect(() => {
+        setLoaded(false);
+        setInternalDashboard(playersDashboard);
+        setLoaded(true);
+    },[playersDashboard])
+
 
     return (
         <>
+            {!loaded &&
+                <Loader />
+            }
             <Tabs>
                 <TabList>
                     <Tab>Players</Tab>
@@ -29,12 +42,12 @@ const AdminView = ({ playersDashboard }) => {
                 <TabPanel>
                     <div className="container">
                         <div className="row">
-                            {playersDashboard.length > 0 && playersDashboard.map((el, idx) => {
+                            {internalDashboard.length > 0 && internalDashboard.map((el, idx) => {
                                 return (<div className="col " style={{borderLeft: "solid "+`${el.color}`}}>
-                                    <Cs key={idx} player_cs={el} />
+                                    <Cs key={el.player_id} player_cs={el} />
                                 </div>)
                             })}
-                            {playersDashboard.length === 0 &&
+                            {internalDashboard.length === 0 &&
                                 <p>No players</p>
                             }
                         </div>

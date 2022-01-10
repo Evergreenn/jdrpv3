@@ -9,6 +9,8 @@ import UserView from "./game/userViem";
 import useApiPost from "../../components/ApiCrawler/post";
 import Cs from "../../components/game/jdrp/cs";
 import AdminView from "./game/adminView";
+import { toast } from 'react-toastify';
+
 
 export default function Game() {
 
@@ -32,8 +34,6 @@ export default function Game() {
         'token': token
     };
 
-    const [toSet, setToSet] = useState([]);
-
 
     const PlayerConnectionEvent = async message => {
         const data = JSON.parse(message.message);
@@ -52,6 +52,9 @@ export default function Game() {
 
             if (undefined === playersDashboard.find(item => toaddd.player_id === item.player_id)) {
                 setPlayersDashboard(Prev => Prev.concat(toaddd));
+                toast.info(toaddd.name +" has arrived !")
+            }else {
+                //Player reload the page
             }
 
         }
@@ -69,26 +72,18 @@ export default function Game() {
         if (!response.success) {
 
         } else {
-
-            console.log("all players", playersDashboard);
-            console.log("id to remove", response.success.player_id);
-
-            const idxToRemove = playersDashboard.findIndex(item => item.player_id === response.success.player_id);
-            // console.log("new array of players", NewPlayerDashboard);
-            playersDashboard.splice(idxToRemove, 1);
-            const toset = playersDashboard;
-            console.log(toset)
-            setToSet(toset);
-
-            console.log("player dashboard after being set", playersDashboard)
+            const player = JSON.parse(response.success.player_cs);
+            setPlayersDashboard(Prev => Prev.filter(item => item.player_id !== response.success.player_id));
+            toast.info(player.name +" left the game !")
         }
     }
 
     useEffect(() => {
 
-        setPlayersDashboard(toSet);
+        setPlayersDashboard(playersDashboard);
 
-    }, [toSet])
+        setLoaded(true);
+    }, [playersDashboard])
 
     const {
         sendMessage,
@@ -109,17 +104,6 @@ export default function Game() {
         queryParams: queryParams
     }, true);
 
-    useEffect(() => {
-
-        if (!isSocketCreator) {
-            return (
-                <UserView user_id={token_decoded.user_id} game_id={gameID} />
-            )
-        }
-        setLoaded(true);
-
-    }, [isSocketCreator])
-
 
     useEffect(async () => {
         if (lastMessage !== null) {
@@ -128,13 +112,13 @@ export default function Game() {
             // console.log(message)
 
             if (message.from === "Game") {
-                switch (message.scope){
+                switch (message.scope) {
                     case "PlayerConnection":
                         PlayerConnectionEvent(message)
-                    break;
+                        break;
                     case "PlayerLeave":
                         PlayerLeaveEvent(message)
-                    break;
+                        break;
                 }
 
             }
@@ -148,7 +132,8 @@ export default function Game() {
                     setadminMessageHistory(prev => prev.concat(message));
                     setNotifications(notifications => notifications + 1);
                 }
-            } 
+            }
+
             // else {
             //     setMessageHistory(prev => prev.concat(message));
             // }
@@ -194,11 +179,21 @@ export default function Game() {
     return (
         <>
             <div>
-                {isSocketCreator &&
+                {readyState != ReadyState.OPEN && !loaded &&
+                    <Loader />
+                }
+
+                {!loaded &&
+                    <Loader />
+                }
+
+
+                {isSocketCreator && loaded &&
+
                     <AdminView playersDashboard={playersDashboard} />
                 }
 
-                {!isSocketCreator &&
+                {!isSocketCreator && loaded &&
                     <UserView user_id={token_decoded.user_id} game_id={gameID} />
                 }
 
@@ -213,9 +208,7 @@ export default function Game() {
                     </div>
                 </div>
 
-                {readyState != ReadyState.OPEN && loaded &&
-                    <Loader />
-                }
+
 
                 {readyState == ReadyState.OPEN &&
 

@@ -11,7 +11,6 @@ const StatsCard = ({ label, stat, description }) => {
                 </summary>
                 <p className="text-dark">{description}</p>
             </details>
-            
         </div>
     )
 }

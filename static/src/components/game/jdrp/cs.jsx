@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import StatsCard from "./Ui/StatsCard";
 import Loader from "../../UI/loader";
-
+import DiceRoll from "../../../pages/private/game/diceRoll";
 
 const Cs = ({ player_cs }) => {
 
@@ -14,7 +14,7 @@ const Cs = ({ player_cs }) => {
     const [willpower, setWillpower] = useState(0);
     const [education, setEducation] = useState(0);
 
-    const [statsArr, setStatsArr] = useState(0);
+    const [statsArr, setStatsArr] = useState([]);
 
     let { stats } = require('../../../data/jdrp/stats.json');
 
@@ -87,6 +87,7 @@ luck": 45,
             {stats.map((stats, idx) =>
                 <div className="" key={idx}>
                     <StatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
+                    <DiceRoll stat={statsArr[stats.label]}/>
                 </div>
             )}
         </>

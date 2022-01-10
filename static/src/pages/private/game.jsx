@@ -34,6 +34,12 @@ export default function Game() {
         'token': token
     };
 
+    const rollMessage = {
+        user_id: "",
+        stat_rolled: "",
+        
+    };
+
 
     const PlayerConnectionEvent = async message => {
         const data = JSON.parse(message.message);
@@ -176,6 +182,14 @@ export default function Game() {
         navigate("/app", { replace: true })
     }, []);
 
+
+    const onHandleRolls = () => {
+
+
+        
+    }
+
+
     return (
         <>
             <div>
@@ -189,7 +203,6 @@ export default function Game() {
 
 
                 {isSocketCreator && loaded &&
-
                     <AdminView playersDashboard={playersDashboard} />
                 }
 

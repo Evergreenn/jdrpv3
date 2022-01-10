@@ -44,7 +44,7 @@ const AdminView = ({ playersDashboard }) => {
                         <div className="row">
                             {internalDashboard.length > 0 && internalDashboard.map((el, idx) => {
                                 return (<div className="col " style={{borderLeft: "solid "+`${el.color}`}}>
-                                    <Cs key={el.player_id} player_cs={el} />
+                                    <Cs key={el.player_id} player_cs={el} isAdmin={true} />
                                 </div>)
                             })}
                             {internalDashboard.length === 0 &&

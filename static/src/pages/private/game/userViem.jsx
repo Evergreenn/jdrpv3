@@ -35,8 +35,6 @@ const UserView = ({ user_id, game_id }) => {
             console.log(response.success);
 
             setPlayerCs(JSON.parse(response.success.player_cs));
-            console.log(playerCs.name)
-            // setDisplayname(playerCs.name)
             setLoaded(true);
         }
 
@@ -62,7 +60,7 @@ const UserView = ({ user_id, game_id }) => {
                     <div className="">
                         <div className="row">
                             <div className="col-4" style={{borderLeft: "solid "+`${playerCs.color}`, height: "100%"}}>
-                                <Cs player_cs={playerCs} />
+                                <Cs player_cs={playerCs} isAdmin={false} />
                             </div>
                             <div className="col-8">
                                 <Maps />

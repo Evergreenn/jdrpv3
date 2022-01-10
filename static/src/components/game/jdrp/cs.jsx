@@ -3,7 +3,7 @@ import StatsCard from "./Ui/StatsCard";
 import Loader from "../../UI/loader";
 import DiceRoll from "../../../pages/private/game/diceRoll";
 
-const Cs = ({ player_cs }) => {
+const Cs = ({ player_cs, isAdmin }) => {
 
     const [strengh, setStrengh] = useState(0);
     const [dexterity, setDexterity] = useState(0);
@@ -87,7 +87,7 @@ luck": 45,
             {stats.map((stats, idx) =>
                 <div className="" key={idx}>
                     <StatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
-                    <DiceRoll stat={statsArr[stats.label]}/>
+                    <DiceRoll statLabel={stats.label} stat={statsArr[stats.label]} isAdmin={isAdmin}/>
                 </div>
             )}
         </>

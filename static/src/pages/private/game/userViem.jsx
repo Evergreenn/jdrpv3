@@ -5,7 +5,7 @@ import Cs from "../../../components/game/jdrp/cs";
 import useApiPost from "../../../components/ApiCrawler/post";
 import Maps from "../../../components/game/jdrp/Ui/map";
 
-const UserView = ({ user_id, game_id,  onHandleRolls}) => {
+const UserView = ({ user_id, game_id, onHandleRolls }) => {
     const [loaded, setLoaded] = useState(false);
     // const [displayName, setDisplayname] = useState("lul");
     const [playerCs, setPlayerCs] = useState({});
@@ -54,9 +54,9 @@ const UserView = ({ user_id, game_id,  onHandleRolls}) => {
                 </TabList>
 
                 <TabPanel>
-                    <div className="">
+                    <div className="container-large">
                         <div className="row">
-                            <div className="col-4" style={{borderLeft: "solid "+`${playerCs.color}`, height: "100%"}}>
+                            <div className="col" style={{ borderLeft: "solid " + `${playerCs.color}`, height: "100%" }}>
                                 <Cs player_cs={playerCs} isAdmin={false} onHandleRolls={onHandleRolls} />
                             </div>
                             <div className="col-8">

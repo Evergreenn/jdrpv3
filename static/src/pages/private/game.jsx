@@ -7,7 +7,6 @@ import WebSocketStatus from "../../components/UI/websocketsatuts";
 import Cookies from "universal-cookie"
 import UserView from "./game/userViem";
 import useApiPost from "../../components/ApiCrawler/post";
-import Cs from "../../components/game/jdrp/cs";
 import AdminView from "./game/adminView";
 import { toast } from 'react-toastify';
 
@@ -35,7 +34,7 @@ export default function Game() {
     };
 
     const rollMessage = {
-        user_id: "",
+        player_id: "",
         stat_rolled: "",
         type: "roll"
     };
@@ -58,8 +57,8 @@ export default function Game() {
 
             if (undefined === playersDashboard.find(item => toaddd.player_id === item.player_id)) {
                 setPlayersDashboard(Prev => Prev.concat(toaddd));
-                toast.info(toaddd.name +" has arrived !")
-            }else {
+                toast.info(toaddd.name + " has arrived !")
+            } else {
                 //Player reload the page
             }
 
@@ -80,7 +79,7 @@ export default function Game() {
         } else {
             const player = JSON.parse(response.success.player_cs);
             setPlayersDashboard(Prev => Prev.filter(item => item.player_id !== response.success.player_id));
-            toast.info(player.name +" left the game !")
+            toast.info(player.name + " left the game !")
         }
     }
 
@@ -105,7 +104,7 @@ export default function Game() {
 
             //TODO: add a message for letting the user know that the mj closed the game.
             console.log(e)
-            // setSocketError(true)
+            setSocketError(true)
         },
         queryParams: queryParams
     }, true);
@@ -141,18 +140,54 @@ export default function Game() {
             }
 
             else {
-                console.log(message)
                 const msg = JSON.parse(message.message);
 
-                if (msg.type === "roll") {
-                    //TODO: DO THIS IN THE WEBSOCKET
-                    const roll = Math.floor(Math.random() * (101 - 1) + 1);
-                    toast.info(msg.player_id + " has rolled the dice for: "+ msg.stat_rolled+" roll result: "+ roll, {
-                        autoClose: 10000,
-                        style:{width: "300px", height: "300px"}
-                    });
-                }
+                if (msg.roll_type === "roll") {
+                    toast.info(
+                        <div className="container">
+                            {msg.player_id} has rolled the dice !
+                            <div className="card">
+                                <div className="row">
+                                    <div className="col">
+                                        target
 
+                                    </div>
+                                    <div className="col">
+
+                                    </div>
+                                    <div className="col">
+                                        roll result
+
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col">
+                                        {msg.stat_rolled}
+
+                                    </div>
+                                    <div className="col">
+                                        →
+                                    </div>
+
+                                    {msg.stat_rolled > msg.roll_result ?
+                                        <div className="col">
+                                            <span className="text-primary">{msg.roll_result}</span>
+                                        </div>
+                                        :
+                                        <div className="col">
+                                            <span className="text-error">{msg.roll_result}</span>
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                        , {
+                            autoClose: 10000,
+                            style: { width: "600px", height: "200px" }
+                        });
+                }
                 // setMessageHistory(prev => prev.concat(message));
             }
         }

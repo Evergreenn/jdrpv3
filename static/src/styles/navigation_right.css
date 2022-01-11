@@ -1,5 +1,5 @@
 .navigation-right {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     right: 0;
 }
@@ -13,7 +13,7 @@
 
 
 .navigation-right-admin {
-    position: absolute;
+    position: fixed;
     bottom: 43px;
     right: 0;
 }

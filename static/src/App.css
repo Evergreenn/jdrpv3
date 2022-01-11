@@ -37,7 +37,7 @@
   --font-family-mono: monaco, "Consolas", "Lucida Console", monospace;
 
 
-  --toastify-color-dark:#272727;
+  --toastify-color-dark: #272727;
   /* --toastify-color-dark:#7f8c8d; */
   --toastify-color-info: #2F86EB;
   --toastify-color-success: #2ecc71;
@@ -46,6 +46,10 @@
 
   /* --toastify-toast-width: 2000px; */
 
+}
+
+.container-large {
+  margin: 10px;
 }
 
 .avatar-circle {
@@ -243,18 +247,23 @@ option.separator {
 
 .pagination {
   display: inline-block;
-  user-select: none; /* standard syntax */
-  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-  -moz-user-select: none; /* mozilla browsers */
-  -khtml-user-select: none; /* webkit (konqueror) browsers */
-  -ms-user-select: none; /* IE10+ */
+  user-select: none;
+  /* standard syntax */
+  -webkit-user-select: none;
+  /* webkit (safari, chrome) browsers */
+  -moz-user-select: none;
+  /* mozilla browsers */
+  -khtml-user-select: none;
+  /* webkit (konqueror) browsers */
+  -ms-user-select: none;
+  /* IE10+ */
 }
 
 .pagination li {
   list-style: none;
   display: inline;
   padding: 0px;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .pagination-a {
@@ -264,16 +273,16 @@ option.separator {
 
 .pagination-caret-disabled {
   /* display: none; */
-  color:var(--color-darkGrey);
-  cursor:not-allowed
+  color: var(--color-darkGrey);
+  cursor: not-allowed
 }
-  
+
 .pagination a:hover {
   border: solid var(--color-lightGrey) 1px;
   border-radius: 4px;
 }
 
-.pagination-active{
+.pagination-active {
   background-color: var(--color-primary);
   color: var(--font-color);
   border-radius: 4px;
@@ -281,6 +290,6 @@ option.separator {
 
 
 /* Copy button */
-#ccopy{
-  cursor:pointer;
+#ccopy {
+  cursor: pointer;
 }

@@ -7,11 +7,14 @@ const Maps = ({ type }) => {
     const defaultMap = useState(map);
 
     return (
-        <div className="container card">
-            <div className="col">
-                <Suspense fallback={<Loader />}>
-                    <img src={defaultMap[0]} alt="" />
-                </Suspense>
+        <div className="container-large card">
+            <div className="row">
+                <div className="col">
+                    <Suspense fallback={<Loader />}>
+                        <img src={defaultMap[0]} alt="" />
+                    </Suspense>
+                </div>
+
             </div>
         </div>
     )

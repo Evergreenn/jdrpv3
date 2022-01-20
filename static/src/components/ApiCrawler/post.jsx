@@ -1,18 +1,18 @@
 import { create } from 'apisauce';
-import Cookies from 'universal-cookie';
+import useCookies from '../security/cookies';
 
 const useApiPost = () => {
 
-    const cookies = new Cookies();
-    const token = cookies.get("token");
+    const { getToken } = useCookies();
+    const token = getToken();
     const api = create({
         baseURL: process.env.REACT_APP_BASE_URL,
         headers: { Authorization: `Bearer ${token}` }
     });
 
-    try{
+    try {
         const postData = async (path, args) => {
-           return await api.post(path, args)
+            return await api.post(path, args)
                 .then(response => {
                     let error = false;
                     let success = false;
@@ -21,9 +21,9 @@ const useApiPost = () => {
                     } else {
                         if ([403, 401].includes(response.status)) {
                             error = "You don't have access to this resource"
-                        }else if([500].includes(response.status)) {
-                            error = response.data 
-                        }else {
+                        } else if ([500].includes(response.status)) {
+                            error = response.data
+                        } else {
                             if (response.problem) {
                                 error = response.problem
                             }
@@ -36,7 +36,7 @@ const useApiPost = () => {
         }
         return { postData }
 
-    }catch (error) {
+    } catch (error) {
         return { success: null, error: "Can't connect to backend" }
     }
 

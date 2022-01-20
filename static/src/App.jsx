@@ -49,7 +49,8 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
-        <nav id="main-nav" className="nav main-nav">
+        {/* <nav id="main-nav" className="nav main-nav card"> */}
+        <nav id="main-nav" className="nav main-nav ">
           <div className="nav-left">
             <a className="brand">Anima Sola</a>
             <div className="tabs">
@@ -86,6 +87,8 @@ const App = () => {
 
       {/* TODO: Get the class of the body to theme the toaster */}
       <ToastContainer
+      // className="card"
+      // bodyClassName="card"
       position="bottom-center"
       theme="dark"
       transition={Slide}
@@ -97,6 +100,7 @@ const App = () => {
       pauseOnFocusLoss={false}
       draggable
       pauseOnHover
+      limit={3}
       />
     </>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Loader from "../../../components/UI/loader";
 import Cs from "../../../components/game/jdrp/cs";
@@ -45,36 +45,84 @@ const UserView = ({ user_id, game_id, onHandleRolls }) => {
 
     return (
         <>
-            <Tabs>
-                <TabList>
-                    <Tab>Character</Tab>
-                    <Tab>Inventory</Tab>
-                    <Tab>Skills</Tab>
-                    <Tab>Notes</Tab>
-                </TabList>
 
-                <TabPanel>
-                    <div className="container-large">
-                        <div className="row">
-                            <div className="col" style={{ borderLeft: "solid " + `${playerCs.color}`, height: "100%" }}>
-                                <Cs player_cs={playerCs} isAdmin={false} onHandleRolls={onHandleRolls} />
+            <div className="userviewtabs">
+                <Tabs>
+
+                    <TabList>
+                        <div className="playerInfo">
+                            <div className="">
+                                <Suspense fallback={<Loader />}>
+                                    <img src="https://via.placeholder.com/200x250" alt="" />
+                                </Suspense>
                             </div>
-                            <div className="col-8">
-                                <Maps />
+                            <div>
+                                {playerCs.name}
                             </div>
                         </div>
-                    </div>
-                </TabPanel>
-                <TabPanel>
-                    <h2>Any content 2</h2>
-                </TabPanel>
-                <TabPanel>
-                    <h2>Any content 3</h2>
-                </TabPanel>
-                <TabPanel>
-                    <h2>Any content LAST</h2>
-                </TabPanel>
-            </Tabs>
+
+                        <Tab>Character</Tab>
+                        <Tab>Inventory</Tab>
+                        <Tab>Skills</Tab>
+                        <Tab>Notes</Tab>
+                    </TabList>
+                    <TabPanel>
+                        <div className="container-large">
+                            <h2>Character view</h2>
+                            <div className="card">
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="card" style={{ borderLeft: "solid " + `${playerCs.color}`, }}>
+                                            <Cs player_cs={playerCs} isAdmin={false} onHandleRolls={onHandleRolls} />
+                                        </div>
+                                    </div>
+                                    <div className="col-8">
+                                        <div className="card">
+
+                                            <Maps />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <div className="container-large ">
+                            <h2>Inventory view</h2>
+                            <div className="card">
+                            </div>
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <div className="container-large ">
+                            <h2>Skills view</h2>
+                            <div className="card">
+                                <div className="row">
+                                    <div className="col-12">
+                                        {/* <textarea name="" id="" cols="30" rows="10"></textarea> */}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <div className="container-large ">
+                            <h2>Notes</h2>
+                            <div className="card">
+                                <div className="row">
+                                    <div className="col-12">
+                                        <textarea name="" id="" cols="30" rows="10"></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </TabPanel>
+                </Tabs>
+            </div>
+
+
 
         </>
     )

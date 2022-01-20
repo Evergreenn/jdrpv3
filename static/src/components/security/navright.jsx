@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
-import Cookies from "universal-cookie"
+import useCookies from "./cookies";
 import { useNavigate } from 'react-router-dom';
 import Loader from "../UI/loader";
 
@@ -9,7 +9,7 @@ const NavRight = ({ authenticated, onHandleLogout }) => {
     const [username, SetUsername] = useState("");
     const [loaded, SetLoaded] = useState(false);
 
-    const cookies = new Cookies();
+    const { getTokenDecoded, removeToken } = useCookies();
     let navigate = useNavigate();
 
     const handleClick = e => {
@@ -18,21 +18,21 @@ const NavRight = ({ authenticated, onHandleLogout }) => {
 
     useEffect(() => {
 
-        const token = cookies.get("token");
-        if (token !== undefined) {
-            const token_decoded = JSON.parse(atob(token.split('.')[1]));
+        const token_decoded = getTokenDecoded();
+
+        if (undefined === token_decoded) {
+            onHandleLogout(false);
+        } else {
             const firstLetter = token_decoded.username[0]
             SetUsername(firstLetter);
-        }else {
-            SetUsername("U");
+            SetLoaded(true);
         }
-        
-        SetLoaded(true);
+
     }, [authenticated]);
 
     const logout = e => {
         handleClick(e);
-        cookies.remove("token");
+        removeToken();
         onHandleLogout(false);
         navigate("/", { replace: true })
 

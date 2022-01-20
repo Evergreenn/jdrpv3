@@ -1,27 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-// import useApiGet from '../../components/ApiCrawler/get';
 import useApiPost from '../../components/ApiCrawler/post';
 import { useNavigate } from "react-router-dom";
 import Pagination from '../../components/UI/pagination';
 import Loader from '../../components/UI/loader';
 
-
-
 export default function PageApp({ authenticated }) {
 
-    const [games, setGames] = useState([]);
-    const [loaded, setLoaded] = useState(true);
-    // const { getData } = useApiGet();
+    // const [games, setGames] = useState([]);
+    // const [loaded, setLoaded] = useState(true);
     const { postData } = useApiPost();
     const navigate = useNavigate();
-    // const [loaded, setLoaded] = useState(false);
-
-
-    // useEffect( () => {
-
-
-    // }, [loaded]);
 
     const handleClick = (slug) => {
         const to64 = btoa(slug);
@@ -86,9 +75,7 @@ export default function PageApp({ authenticated }) {
                     </div>
 
                     <div className="container">
-                      
                         <Pagination handleRemoveClick={handleRemoveClick} handleClick={handleClick} />
-
                     </div>
 
                 </>

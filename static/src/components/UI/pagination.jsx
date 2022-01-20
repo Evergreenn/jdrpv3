@@ -57,7 +57,8 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
     const Items = ({ currentItems }) => {
 
         return (
-            <>
+            <>  <div className="card">
+
                 <h1 className="is-center">Your games ({totalGames}) </h1>
                 <p className="text-dark is-center"> Delete a game will erase all data related to it and all progression will be lost. This should be taked seriously.</p>
                 {currentItems && currentItems
@@ -67,9 +68,9 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
                                 <div className="card">
                                     <table>
                                         <tr key={idx}>
-                                            <td className="text-center">{data.game_name}</td>
-                                            <td className="text-center">{data.game_type}</td>
-                                            <td className="text-center">{data.created_at}</td>
+                                            <td> <p className="text-center">{data.game_name}</p></td>
+                                            <td> <p className="text-center">{data.game_type}</p></td>
+                                            <td> <p className="text-center">{data.created_at}</p></td>
                                             <td className="text-center">
                                                 <a className="button primary" onClick={() => onHandleClick(data.slug)}> Launch</a>
                                                 {/* <a className="button primary"> Launch</a> */}
@@ -83,6 +84,7 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
                         </div>
                     )
                 }
+            </div>
             </>
         );
     }

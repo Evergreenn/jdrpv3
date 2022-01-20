@@ -4,7 +4,8 @@
 @import "styles/navigation_right.css";
 @import "styles/notifications.css";
 @import "styles/tabs.css";
-@import "styles/toast.css";
+/* @import "styles/toast.css"; */
+@import "styles/userview.css";
 @import "../node_modules/react-toastify/dist/ReactToastify.css";
 
 
@@ -12,8 +13,47 @@
   text-align: center;
 }
 
+body {
+  height: 100%;
+    /* background-color: var(--bg-color-filter);
+    background-image: 
+    radial-gradient(at 47% 33%, var(--radial1) 0, transparent 59%), 
+    radial-gradient(at 82% 65%, var(--radial2) 0, transparent 55%); */
+    /* background-color: #9dc5c3;
+    background-image: linear-gradient(315deg, #9dc5c3 0%, #5e5c5c 74%); */
+
+  /* background-color: #a55c1b;
+    background-image: linear-gradient(315deg, #a55c1b 0%, #000000 74%); */
+
+
+    background-color: #000000;
+    background-image: linear-gradient(315deg, #000000 0%, #7f8c8d 74%);
+
+    /* background-color: #000000;
+    background-image: linear-gradient(315deg, #d7e9f2 0%, #faeedf 74%); */
+
+
+
+    background-attachment: fixed;
+}
+
+.card {
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  background-color: var(--bg-color-oppacited);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+
 :root {
-  --bg-color: #ffffff;
+
+  --radial1: hsl(162, 77%, 40%);
+  --radial2: hsl(198.00, 100%, 50%);
+  --bg-color-filter: #50E3C2;
+
+  --bg-color: rgba(255, 255, 255);
+  --bg-color-oppacited: rgba(255, 255, 255, 0.2);
   --bg-secondary-color: #f3f3f6;
   /* --color-primary: #14854F; */
   --color-primary: #2196f3;
@@ -79,7 +119,9 @@
   box-sizing: border-box;
   width: 100%;
   padding: 5px;
+  opacity: 1;
 }
+
 
 #caret {
   position: absolute;
@@ -293,3 +335,33 @@ option.separator {
 #ccopy {
   cursor: pointer;
 }
+
+
+
+/* table */
+
+table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  position: relative;
+}
+
+table td p {
+  display: inline-block;
+  width: 200px;
+  vertical-align: middle
+}
+
+
+/* user view panel left */
+
+/* .panel-uservies-left{
+  background-color: var(--bg-secondary-color);
+  width: 400px;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  display: block;
+  height: 100vh;
+} */

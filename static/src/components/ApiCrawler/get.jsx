@@ -1,18 +1,18 @@
 import { create } from 'apisauce';
-import Cookies from 'universal-cookie';
+import useCookies from '../security/cookies';
 
 const useApiGet = () => {
 
-    const cookies = new Cookies();
-    const token = cookies.get("token");
+    const { getToken } = useCookies();
+    const token = getToken();
     const api = create({
         baseURL: process.env.REACT_APP_BASE_URL,
         headers: { Authorization: `Bearer ${token}` }
     });
 
-    try{
+    try {
         const getData = async (path) => {
-           return await api.get(path)
+            return await api.get(path)
                 .then(response => {
                     let error = false;
                     let success = false;
@@ -32,7 +32,7 @@ const useApiGet = () => {
         }
         return { getData }
 
-    }catch (error) {
+    } catch (error) {
         return { success: null, error: "Can't connect to backend" }
     }
 

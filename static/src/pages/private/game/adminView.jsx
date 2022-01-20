@@ -40,22 +40,29 @@ const AdminView = ({ playersDashboard, onHandleRolls }) => {
                 </TabList>
 
                 <TabPanel>
-                    <div className="container">
+                    <div className="container ">
                         <div className="row">
                             {internalDashboard.length > 0 && internalDashboard.map((el, idx) => {
-                                return (<div className="col " style={{borderLeft: "solid "+`${el.color}`}}>
+                                return (<div className="card col" style={{borderLeft: "solid "+`${el.color}`}}>
                                     <Cs key={el.player_id} player_cs={el} isAdmin={true} onHandleRolls={onHandleRolls} />
+
                                 </div>)
                             })}
                             {internalDashboard.length === 0 &&
-                                <p>No players</p>
+                            
+                            <div className="col card">
+                                <p className="is-center">No players</p>
+                            </div>
                             }
                         </div>
                     </div>
 
                 </TabPanel>
                 <TabPanel>
+                    <div className="container card">
+
                     <Maps />
+                    </div>
                 </TabPanel>
                 <TabPanel>
                     <h2>Any content 2</h2>

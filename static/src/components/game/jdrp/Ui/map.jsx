@@ -7,7 +7,7 @@ const Maps = ({ type }) => {
     const defaultMap = useState(map);
 
     return (
-        <div className="container-large card">
+        <div className="container-large">
             <div className="row">
                 <div className="col">
                     <Suspense fallback={<Loader />}>

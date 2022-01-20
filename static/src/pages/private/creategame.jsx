@@ -92,80 +92,84 @@ export default function GameCreator({ authenticated }) {
                     </div>
                     <div className="container">
                         <div className="is-center row">
-                            <form onSubmit={handleSubmit} autoComplete="off">
-                                <label>
-                                    Game name :
-                                    <input type="text" autoComplete="off" value={name} onChange={handleChangeName} /> </label>
-                                <label>
-                                    Game Password :
-                                    <input type="password" autoComplete="off" value={password} onChange={handleChangePassword} /> </label>
-                                <label>
-                                    Character Sheets Template:
-                                    <select autoComplete="off" defaultValue={defaultvalue} onChange={handleChangeCst}>
-                                        <option selected value={defaultvalue}>D&amp;D 3</option>
-                                        <option value="Dd5">D&amp;D 5</option>
-                                    </select>
-                                </label>
-                                <div>
+                            <div className="card">
+
+
+                                <form onSubmit={handleSubmit} autoComplete="off">
                                     <label>
-                                        Custom Rules
-                                        <span class="switch pull-right">
-                                            <input type="checkbox" onChange={handleChangeCustomRules} />
-                                            <span class="slider round"></span>
-                                        </span>
+                                        Game name :
+                                        <input type="text" autoComplete="off" value={name} onChange={handleChangeName} /> </label>
+                                    <label>
+                                        Game Password :
+                                        <input type="password" autoComplete="off" value={password} onChange={handleChangePassword} /> </label>
+                                    <label>
+                                        Character Sheets Template:
+                                        <select autoComplete="off" defaultValue={defaultvalue} onChange={handleChangeCst}>
+                                            <option selected value={defaultvalue}>D&amp;D 3</option>
+                                            <option value="Dd5">D&amp;D 5</option>
+                                        </select>
                                     </label>
-                                </div>
-                                {customRules &&
-                                    <>
-                                        <div>
-                                            <label>
-                                                Automated combat calculator
-                                                <span class="switch pull-right">
-                                                    <input type="checkbox" name="Automated_combat_calculator" onChange={handleCustomRules} />
-                                                    <span class="slider round"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                Generated items
-                                                <span class="switch pull-right">
-                                                    <input type="checkbox" name="Generated_items" onChange={handleCustomRules} />
-                                                    <span class="slider round"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                Generated monsters
-                                                <span class="switch pull-right">
-                                                    <input type="checkbox" name="Generated_monsters" onChange={handleCustomRules} />
-                                                    <span class="slider round"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                Generated classes
-                                                <span class="switch pull-right">
-                                                    <input type="checkbox" name="Generated_classes" onChange={handleCustomRules} />
-                                                    <span class="slider round"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                Generated races
-                                                <span class="switch pull-right">
-                                                    <input type="checkbox" name="Generated_races" onChange={handleCustomRules} />
-                                                    <span class="slider round"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </>
-                                }
-                                <input className="pull-right" type="submit" value="Submit" />
-                            </form>
+                                    <div>
+                                        <label>
+                                            Custom Rules
+                                            <span class="switch pull-right">
+                                                <input type="checkbox" onChange={handleChangeCustomRules} />
+                                                <span class="slider round"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    {customRules &&
+                                        <>
+                                            <div>
+                                                <label>
+                                                    Automated combat calculator
+                                                    <span class="switch pull-right">
+                                                        <input type="checkbox" name="Automated_combat_calculator" onChange={handleCustomRules} />
+                                                        <span class="slider round"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    Generated items
+                                                    <span class="switch pull-right">
+                                                        <input type="checkbox" name="Generated_items" onChange={handleCustomRules} />
+                                                        <span class="slider round"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    Generated monsters
+                                                    <span class="switch pull-right">
+                                                        <input type="checkbox" name="Generated_monsters" onChange={handleCustomRules} />
+                                                        <span class="slider round"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    Generated classes
+                                                    <span class="switch pull-right">
+                                                        <input type="checkbox" name="Generated_classes" onChange={handleCustomRules} />
+                                                        <span class="slider round"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    Generated races
+                                                    <span class="switch pull-right">
+                                                        <input type="checkbox" name="Generated_races" onChange={handleCustomRules} />
+                                                        <span class="slider round"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </>
+                                    }
+                                    <input className="pull-right" type="submit" value="Submit" />
+                                </form>
+                            </div>
                         </div>
                         <div className="is-center row">
                             <p className="text-error">{error}</p>

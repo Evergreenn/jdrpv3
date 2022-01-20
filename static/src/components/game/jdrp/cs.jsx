@@ -59,33 +59,40 @@ luck": 45,
 } 
 */}
 
+            {isAdmin &&
                 <div className="row" style={{ paddingLeft: 0, marginLeft: 0, paddingRight: 0, marginRight: 0 }}>
-                    <div className="col-12" style={{flex: "0 0 100%", maxWidth:"100%", paddingLeft: 0, marginLeft: 0, paddingRight: 0, marginRight: 0, background: "linear-gradient(to right, " + `${statsArr.color}` + ", white)" }}>
-                        <div className="pull-right">
-                            <Suspense fallback={<Loader />}>
-                                <img src="https://via.placeholder.com/200x250" alt="" />
-                            </Suspense>
-                        </div>
+                <div className="col-12" style={{ flex: "0 0 100%", maxWidth: "100%", paddingLeft: 0, marginLeft: 0, paddingRight: 0, marginRight: 0, background: "linear-gradient(to right, " + `${statsArr.color}` + ", white)" }}>
+                    <div className="pull-right">
+                        <Suspense fallback={<Loader />}>
+                            <img src="https://via.placeholder.com/200x250" alt="" />
+                        </Suspense>
                     </div>
                 </div>
-                <div className="card">
-                    <div className="row">
-                        <div className="col">
-                            <p>name: {statsArr.name} </p>
-                            <p>race: {statsArr.race} </p>
-                            <p>class: {statsArr.class} </p>
-                        </div>
-                        <div className="pull-right">
-                            <p>alignment: {statsArr.alignment} </p>
-                            <p>particularity: {statsArr.particularity} </p>
-                        </div>
-                    </div>
-                </div>
+            </div>
 
+            }
+
+            <div className="">
+                <div className="row">
+                    <div className="col">
+                        {isAdmin &&
+                            <p>name: {statsArr.name} </p>
+                        }
+                        <p>race: {statsArr.race} </p>
+                        <p>class: {statsArr.class} </p>
+                    </div>
+                    <div className="pull-right">
+                        <p>alignment: {statsArr.alignment} </p>
+                        <p>particularity: {statsArr.particularity} </p>
+                    </div>
+                </div>
+            </div>
+            <hr />
             {stats.map((stats, idx) =>
                 <div className="" key={idx}>
                     <StatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
-                    <DiceRoll playerId={statsArr.player_id} onHandleRolls={onHandleRolls} stat={statsArr[stats.label]} isAdmin={isAdmin}/>
+                    <DiceRoll playerId={statsArr.player_id} onHandleRolls={onHandleRolls} stat={statsArr[stats.label]} isAdmin={isAdmin} />
+                    <hr />
                 </div>
             )}
         </>

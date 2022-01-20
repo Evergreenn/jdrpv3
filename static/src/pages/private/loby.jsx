@@ -74,7 +74,7 @@ export default function Lobby({ authenticated }) {
 
     if (haveAPlayer === false) {
         return (
-            <CreatePlayer gameId={gameId}/>
+            <CreatePlayer gameId={gameId} />
         )
     }
 
@@ -86,16 +86,18 @@ export default function Lobby({ authenticated }) {
                 </div>
                 <div className="container">
                     <div className="is-center row">
-                        <form onSubmit={handleSubmit} autoComplete="off">
-                            <label>
-                                Game Id :
-                                <input type="text" autoComplete="off" value={gameId} onChange={handleChangeName} /> </label>
-                            {/* <input className="pull-right" type="submit" value="Submit" /> */}
-                            <label>
-                                Game Password :
-                                <input type="text" autoComplete="off" value={gamepwd} onChange={handleChangePassword} /> </label>
-                            <input className="pull-right" type="submit" value="Submit" />
-                        </form>
+                        <div className="card">
+                            <form onSubmit={handleSubmit} autoComplete="off">
+                                <label>
+                                    Game Id :
+                                    <input type="text" autoComplete="off" value={gameId} onChange={handleChangeName} /> </label>
+                                {/* <input className="pull-right" type="submit" value="Submit" /> */}
+                                <label>
+                                    Game Password :
+                                    <input type="text" autoComplete="off" value={gamepwd} onChange={handleChangePassword} /> </label>
+                                <input className="pull-right" type="submit" value="Submit" />
+                            </form>
+                        </div>
                     </div>
                     <div className="is-center row">
                         <p className="text-error">{error}</p>

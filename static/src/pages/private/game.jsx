@@ -4,11 +4,11 @@ import Loader from "../../components/UI/loader";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useNavigate } from 'react-router-dom';
 import WebSocketStatus from "../../components/UI/websocketsatuts";
-import Cookies from "universal-cookie"
 import UserView from "./game/userViem";
 import useApiPost from "../../components/ApiCrawler/post";
 import AdminView from "./game/adminView";
 import { toast } from 'react-toastify';
+import useCookies from "../../components/security/cookies";
 
 
 export default function Game() {
@@ -25,9 +25,11 @@ export default function Game() {
     const gameID = ws.game_id;
     const socketUrl = `ws://${ws.ws_address}`;
     let navigate = useNavigate()
-    const cookies = new Cookies();
-    const token = cookies.get("token");
-    const token_decoded = JSON.parse(atob(token.split('.')[1]));
+
+    const { getToken, getTokenDecoded } = useCookies();
+    const token = getToken();
+    const token_decoded = getTokenDecoded();
+
     const { postData } = useApiPost();
     const queryParams = {
         'token': token
@@ -184,8 +186,10 @@ export default function Game() {
                             </div>
                         </div>
                         , {
+                            // className: 'card',
                             autoClose: 10000,
-                            style: { width: "600px", height: "200px" }
+                            style: { width: "600px", height: "200px" },
+
                         });
                 }
                 // setMessageHistory(prev => prev.concat(message));
@@ -267,13 +271,11 @@ export default function Game() {
                         {notifications > 0 && <span className="badge">{notifications}</span>}
                     </a>
                     <div className="panel-wrap">
-                        <div className="panel">
+                        <div className="panel card">
                             <WebSocketStatus websocketState={connectionStatus} AdminMsg={adminMessageHistory} handleOnClickClose={handleOnClickClose} />
                         </div>
                     </div>
                 </div>
-
-
 
                 {readyState == ReadyState.OPEN &&
 

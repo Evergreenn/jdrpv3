@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Cookies from "universal-cookie"
 import { useNavigate } from 'react-router-dom';
+import useCookies from "../components/security/cookies";
 
 
 export default function AccountCreation({ onHandleRefresh }) {
@@ -11,6 +11,8 @@ export default function AccountCreation({ onHandleRefresh }) {
     const [passwordrepeat, SetPasswordRepeat] = useState("");
     const [error, SetError] = useState("");
     const [redirect, SetRedirect] = useState(false);
+    const { setToken } = useCookies();
+
 
     let navigate = useNavigate()
 
@@ -44,15 +46,8 @@ export default function AccountCreation({ onHandleRefresh }) {
             "username": name,
             "password": password
         }).then(response => {
-            const cookies = new Cookies();
-            const date = new Date().getTime();
-            const maxAge = (parseInt(response.data.expiration_time)) - (parseInt(date / 1000));
-            cookies.set("token", response.data.jwt, {
-                sameSite: "lax",
-                secure: true,
-                maxAge: maxAge,
 
-            })
+            setToken(response.data.jwt, response.data.expiration_time);
             SetRedirect(true);
             handleRefresh(true);
 

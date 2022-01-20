@@ -28,7 +28,7 @@ const WebSocketStatus = ({ websocketState, AdminMsg, handleOnClickClose }) => {
     return (
         <>
             <div className="container">
-                <div className="card" >
+                <div className="" >
                     <div className="row">
                         <div className="col-8">
                             <p>The WebSocket is currently:

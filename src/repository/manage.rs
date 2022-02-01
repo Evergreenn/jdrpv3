@@ -5,7 +5,6 @@ use serde::Serialize;
 use uuid::Uuid;
 use crate::Cst;
 use chrono::NaiveDateTime;
-use std::option;
 // mod routes;
 
 // use routes::post::Cst;
@@ -60,12 +59,12 @@ pub struct GamePublic {
 }
 
 
-pub fn insert_new_user(username: &String, password: String, permissions: Vec<String>) -> Result<std::string::String,  Box<dyn std::error::Error>> {
+pub fn insert_new_user(username: &str, password: String, permissions: Vec<String>) -> Result<std::string::String,  Box<dyn std::error::Error>> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
     let perm_json = serde_json::to_string(&Permissions {
-        permissions: permissions
+        permissions
     }).unwrap();
 
     let user_id = Uuid::new_v4();    
@@ -127,7 +126,7 @@ pub fn insert_new_player(creator_id: String, game_id: String, player_cs: String)
     Ok(player_id.to_string())
 }
 
-pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst, game_slug: &String,) -> String {
+pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst, game_slug: &str,) -> String {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
@@ -177,7 +176,7 @@ pub fn insert_new_game(game_name: String, game_password: String, creator_id: Str
     ro
 }
 
-pub fn get_user(username: &String)-> Vec<User> {
+pub fn get_user(username: &str)-> Vec<User> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
@@ -219,7 +218,7 @@ pub fn get_player(user_id: String, game_id: String) -> Option<Player> {
 
 }
 
-pub fn get_game(user_id: &String, page: u16)-> Vec<GamePublic> {
+pub fn get_game(user_id: &str, page: u16)-> Vec<GamePublic> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
@@ -238,7 +237,7 @@ pub fn get_game(user_id: &String, page: u16)-> Vec<GamePublic> {
     ret
 }
 
-pub fn get_count_game(user_id: &String)-> Option<u16> {
+pub fn get_count_game(user_id: &str)-> Option<u16> {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
@@ -253,7 +252,7 @@ pub fn get_count_game(user_id: &String)-> Option<u16> {
     ret
 }
 
-pub fn delete_game(game_id: &String)-> bool {
+pub fn delete_game(game_id: &str)-> bool {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
@@ -266,7 +265,7 @@ pub fn delete_game(game_id: &String)-> bool {
     true
 }
 
-pub fn get_socket_address(game_id: &String) -> Option<String> {
+pub fn get_socket_address(game_id: &str) -> Option<String> {
 
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
@@ -282,7 +281,7 @@ pub fn get_socket_address(game_id: &String) -> Option<String> {
         ret
 }
 
-pub fn is_user_creator_of_game(user_id: String, game_id: &String) -> Option<u8> {
+pub fn is_user_creator_of_game(user_id: String, game_id: &str) -> Option<u8> {
 
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();

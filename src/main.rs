@@ -61,9 +61,6 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/api")
                     .wrap(auth)
-                    .service(permission_secured)
-                    .service(permission_secured)
-                    .service(user_reserved)
                     .service(create_game)
                     .service(crate::routes::post::delete_game)
                     .service(get_game_from_user_id)

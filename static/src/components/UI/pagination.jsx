@@ -56,6 +56,8 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
 
     const Items = ({ currentItems }) => {
 
+        console.log(currentItems);
+
         return (
             <>  <div className="card">
 

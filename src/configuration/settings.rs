@@ -64,33 +64,33 @@ impl Settings {
 }
 
 //TODO: Render a error here
-impl Race {
-    pub fn get_stats(&self, field: &str) -> Stats {
-        match field {
-            "human" => self.human,
-            "half_orc" => self.half_orc,
-            "elf" => self.elf,
-            "half_elf" => self.half_elf,
-            "dwarf" => self.dwarf,
-            "saurial" => self.saurial,
-            "cambion" => self.cambion,
-            _ => panic!("a"),
-        }
-    }
-}
+// impl Race {
+//     pub fn get_stats(&self, field: &str) -> Stats {
+//         match field {
+//             "human" => self.human,
+//             "half_orc" => self.half_orc,
+//             "elf" => self.elf,
+//             "half_elf" => self.half_elf,
+//             "dwarf" => self.dwarf,
+//             "saurial" => self.saurial,
+//             "cambion" => self.cambion,
+//             _ => panic!("a"),
+//         }
+//     }
+// }
 
-impl Class {
-    pub fn get_stats(&self, field: &str) -> Stats {
-        match field {
-            "warrior" => self.warrior,
-            "mage" => self.mage,
-            "roublard" => self.roublard,
-            "rodeur" => self.rodeur,
-            "monk" => self.monk,
-            "drood" => self.drood,
-            "paladin" => self.paladin,
-            "clerc" => self.clerc,
-            _ => panic!("a"),
-        }
-    }
-}
+// impl Class {
+//     pub fn get_stats(&self, field: &str) -> Stats {
+//         match field {
+//             "warrior" => self.warrior,
+//             "mage" => self.mage,
+//             "roublard" => self.roublard,
+//             "rodeur" => self.rodeur,
+//             "monk" => self.monk,
+//             "drood" => self.drood,
+//             "paladin" => self.paladin,
+//             "clerc" => self.clerc,
+//             _ => panic!("a"),
+//         }
+//     }
+// }

@@ -14,10 +14,13 @@ export default function PageApp({ authenticated }) {
 
     const handleClick = (slug) => {
         const to64 = btoa(slug);
+
+        console.log(slug);
+
         //TODO
-        navigate({
-            pathname: `/game/${to64}`,
-        });
+        // navigate({
+            // pathname: `/game/${to64}`,
+        // });
     }
 
     const handleRemoveClick = (gameId) => {

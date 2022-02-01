@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import StatsCard from "./Ui/StatsCard";
+import AdminStatsCard from "./Ui/AdminStatsCard";
 import Loader from "../../UI/loader";
 import DiceRoll from "../../../pages/private/game/diceRoll";
 
@@ -88,9 +89,17 @@ luck": 45,
                 </div>
             </div>
             <hr />
+
+            
             {stats.map((stats, idx) =>
                 <div className="" key={idx}>
-                    <StatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
+{/* TODO: move this outside the loop */}
+                    {isAdmin ?
+                        <AdminStatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
+                        :
+                        <StatsCard label={stats.label} stat={statsArr[stats.label]} description={stats.description} />
+
+                    }
                     <DiceRoll playerId={statsArr.player_id} onHandleRolls={onHandleRolls} stat={statsArr[stats.label]} isAdmin={isAdmin} />
                     <hr />
                 </div>

@@ -3,19 +3,14 @@ use crate::claim::*;
 use crate::configuration::settings::Settings;
 use crate::repository::manage::*;
 use crate::security::password_manager::*;
-use crate::ws::ws;
-use actix_web::{
-    dev::HttpResponseBuilder, error, http::header, http::StatusCode, post, web, Error,
-    HttpResponse, Responder, Result,
-};
+use crate::ws::ws_helper;
+use actix_web::{error, post, web, Error, HttpResponse, Responder, Result};
 use actix_web_grants::proc_macro::has_any_role;
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use chrono::{Duration, Utc};
-use derive_more::{Display, Error};
+use derive_more::Error;
 use serde::{Deserialize, Serialize};
 use std::process::Command;
-// use futures::Future;
-use std::future::Future;
 
 #[derive(Deserialize)]
 pub struct UserInput {
@@ -200,7 +195,7 @@ pub async fn get_player(info: web::Json<GameIdInput>, credentials: BearerAuth) -
 //TODO: reformat this
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/playertokened")]
-pub async fn get_playertokened(info: web::Json<GetPlayerInput>, credentials: BearerAuth) -> impl Responder {
+pub async fn get_playertokened(info: web::Json<GetPlayerInput>) -> impl Responder {
     let game_info = info.into_inner();
 
     println!("{:#?}", game_info);
@@ -224,7 +219,7 @@ pub async fn create_game(
     //TODO: check values from input
     //TODO: start process with game parameters
 
-    let sock = ws::get_free_socket_address();
+    let sock = ws_helper::get_free_socket_address();
     let cmd_args = format!("-w{}", sock);
     let cmd_arg = format!("-t{}", credentials.token());
     println!("{:#?}", sock);
@@ -252,7 +247,10 @@ pub async fn create_game(
         .unwrap();
     // .expect("failed to load socket");
 
-    web::Json(WebSocketAddress { game_id: game_id , ws_address: sock })
+    web::Json(WebSocketAddress {
+        game_id,
+        ws_address: sock,
+    })
 }
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
@@ -272,25 +270,20 @@ pub async fn delete_game(info: web::Json<GameIdInput>, credentials: BearerAuth) 
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
 #[post("/socket-address")]
-pub async fn get_socket_address(info: web::Json<GameIdInput>, credentials: BearerAuth) -> impl Responder {
+pub async fn get_socket_address(info: web::Json<GameIdInput>) -> impl Responder {
     let game_info = info.into_inner();
-    let t = decode_jwt(credentials.token()).unwrap();
 
-    match crate::repository::manage::get_socket_address(&game_info.game_id){
+    match crate::repository::manage::get_socket_address(&game_info.game_id) {
         Some(e) => {
-            println!("socket of game id: {:#?}  : {:#?}",game_info.game_id, e);
+            println!("socket of game id: {:#?}  : {:#?}", game_info.game_id, e);
 
             Ok(web::Json(e))
-        },
-        None => {
-            Err(CustomError {
-                code: 1376854,
-                message: "Game is ghosted",
-            })
         }
+        None => Err(CustomError {
+            code: 1376854,
+            message: "Game is ghosted",
+        }),
     }
-
-
 }
 
 #[has_any_role("ADMIN", "MDJ", "USER")]
@@ -299,7 +292,6 @@ pub async fn create_player(
     playerinput: web::Json<UserInputPlayer>,
     credentials: BearerAuth,
 ) -> impl Responder {
-
     let playerinput = playerinput.into_inner();
     let token = decode_jwt(credentials.token()).unwrap();
 
@@ -321,16 +313,17 @@ pub async fn create_player(
                 u.willpower,
                 u.education,
             ];
-            let w: Vec<&u8> = tmp
+
+            let w = tmp
                 .iter()
                 .filter(|s| {
                     s > &&config.game_stats.max_per_cat || s < &&config.game_stats.min_per_cat
                 })
-                .collect();
+                .count();
 
             let t: u16 = tmp.iter().map(|&b| b as u16).sum();
 
-            if !w.is_empty() || t > config.game_stats.max_stat {
+            if w > 0 || t > config.game_stats.max_stat {
                 Err(CustomError {
                     code: 16873154,
                     message: "Stats have been altered",

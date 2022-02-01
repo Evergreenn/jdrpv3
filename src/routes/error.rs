@@ -13,7 +13,7 @@ pub struct CustomError {
 }
 
 impl CustomError {
-    pub fn message(&self) -> String {
+    pub fn _message(&self) -> String {
         match &self.message {
             Some(c) => c.clone(),
             None => String::from("")

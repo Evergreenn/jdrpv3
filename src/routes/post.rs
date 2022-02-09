@@ -187,7 +187,7 @@ pub async fn get_player(info: web::Json<GameIdInput>, credentials: BearerAuth) -
     let t = decode_jwt(credentials.token()).unwrap();
     let player = crate::repository::manage::get_player(t.user_id, game_info.game_id);
 
-    println!("user get from db {:#?}", player);
+    println!("user get  from db {:#?}", player);
 
     web::Json(player)
 }
@@ -219,36 +219,70 @@ pub async fn create_game(
     //TODO: check values from input
     //TODO: start process with game parameters
 
-    let sock = ws_helper::get_free_socket_address();
-    let cmd_args = format!("-w{}", sock);
-    let cmd_arg = format!("-t{}", credentials.token());
-    println!("{:#?}", sock);
-    println!("{:#?}", cmd_args);
-
+    let token_arg = format!("-t{}", credentials.token());
+    
     let t = decode_jwt(credentials.token()).unwrap();
-
-    //TODO: b64 sock
+    
     let game_id = insert_new_game(
         game_info.gamename,
         game_info.password,
         t.user_id,
         game_info.cst,
-        &sock,
     );
-
-    let cmd_argg = format!("-g{}", game_id);
-    println!("game_id: {:#?}", sock);
+    
+    let sock = ws_helper::get_free_socket_address(&game_id);
+    let socket_args = format!("-w{}", sock);
+    
+    let gameid_argg = format!("-g{}", game_id);
 
     let _output = Command::new(dotenv!("WS_BINARY_PATH"))
-        .arg(cmd_args)
-        .arg(cmd_arg)
-        .arg(cmd_argg)
+        .args([socket_args, token_arg, gameid_argg])
         .spawn()
         .unwrap();
     // .expect("failed to load socket");
 
     web::Json(WebSocketAddress {
         game_id,
+        ws_address: sock,
+    })
+}
+
+
+#[has_any_role("ADMIN", "MDJ", "USER")]
+#[post("/start-game")]
+pub async fn start_game(
+    info: web::Json<GameIdInput>,
+    credentials: BearerAuth,
+) -> impl Responder {
+    let game_info = info.into_inner();
+
+    println!("{:#?}", game_info);
+    //TODO: check values from input
+    //TODO: start process with game parameters
+
+    let sock = ws_helper::get_free_socket_address(&game_info.game_id);
+    let socket_args = format!("-w{}", sock);
+    let token_arg = format!("-t{}", credentials.token());
+
+    // let t = decode_jwt(credentials.token()).unwrap();
+
+    // let game_id = insert_new_game(
+    //     game_info.gamename,
+    //     game_info.password,
+    //     t.user_id,
+    //     game_info.cst,
+    // );
+
+    let gameid_argg = format!("-g{}", game_info.game_id);
+
+    let _output = Command::new(dotenv!("WS_BINARY_PATH"))
+        .args([socket_args, token_arg, gameid_argg])
+        .spawn()
+        .unwrap();
+    // .expect("failed to load socket");
+
+    web::Json(WebSocketAddress {
+        game_id: game_info.game_id,
         ws_address: sock,
     })
 }
@@ -273,11 +307,14 @@ pub async fn delete_game(info: web::Json<GameIdInput>, credentials: BearerAuth) 
 pub async fn get_socket_address(info: web::Json<GameIdInput>) -> impl Responder {
     let game_info = info.into_inner();
 
-    match crate::repository::manage::get_socket_address(&game_info.game_id) {
+    match ws_helper::get_socket_for_player(&game_info.game_id) {
         Some(e) => {
             println!("socket of game id: {:#?}  : {:#?}", game_info.game_id, e);
 
-            Ok(web::Json(e))
+            Ok(web::Json(WebSocketAddress {
+                game_id: game_info.game_id,
+                ws_address: e,
+            }))
         }
         None => Err(CustomError {
             code: 1376854,

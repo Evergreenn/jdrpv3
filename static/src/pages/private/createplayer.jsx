@@ -250,7 +250,7 @@ const CreatePlayer = ({ gameId }) => {
 
                             setIsSubbmitted(false);
                         }else {
-                            const to64 = btoa(JSON.stringify({game_id: gameId, ws_address:response.success}));
+                            const to64 = btoa(JSON.stringify(response.success));
     
                             navigate({
                                 pathname: `/game/${to64}`,

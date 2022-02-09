@@ -42,8 +42,6 @@ export default function GameCreator({ authenticated }) {
             SetError(response.error);
         } else {
 
-            console.log(response.success)
-
             const to64 = btoa(JSON.stringify(response.success));
 
             navigate({

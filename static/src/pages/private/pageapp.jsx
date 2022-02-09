@@ -7,23 +7,25 @@ import Loader from '../../components/UI/loader';
 
 export default function PageApp({ authenticated }) {
 
-    // const [games, setGames] = useState([]);
-    // const [loaded, setLoaded] = useState(true);
     const { postData } = useApiPost();
     const navigate = useNavigate();
 
-    const handleClick = (slug) => {
-        const to64 = btoa(slug);
+    const handleClick = async gameId => {
 
-        console.log(slug);
+        console.log(gameId);
 
+        const ws_address = await postData("api/start-game", {
+            "game_id": gameId
+        });
+
+        const to64 = btoa(JSON.stringify(ws_address.success));
         //TODO
-        // navigate({
-            // pathname: `/game/${to64}`,
-        // });
+        navigate({
+            pathname: `/game/${to64}`,
+        });
     }
 
-    const handleRemoveClick = (gameId) => {
+    const handleRemoveClick = gameId => {
 
         postData("api/delete-game", {
             "game_id": gameId

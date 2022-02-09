@@ -56,7 +56,6 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
 
     const Items = ({ currentItems }) => {
 
-        console.log(currentItems);
 
         return (
             <>  <div className="card">
@@ -74,7 +73,7 @@ const Pagination = ({ handleClick, handleRemoveClick }) => {
                                             <td> <p className="text-center">{data.game_type}</p></td>
                                             <td> <p className="text-center">{data.created_at}</p></td>
                                             <td className="text-center">
-                                                <a className="button primary" onClick={() => onHandleClick(data.slug)}> Launch</a>
+                                                <a className="button primary" onClick={() => onHandleClick(data.game_id)}> Launch</a>
                                                 {/* <a className="button primary"> Launch</a> */}
                                                 <a className="button error" onClick={() => onHandleRemoveClick(data.game_id)}> Delete</a>
                                                 {/* <a className="button error" > Delete</a> */}

@@ -55,12 +55,25 @@ export default function Lobby({ authenticated }) {
 
             } else {
 
-                //TODO: get socket address and redirect to game
+                const response = await postData("api/socket-address", {
+                    "game_id": gameId,
+                    // "password": password,
+                });
+        
+                if (response.success === undefined || response.error === undefined) {
+                    SetError("Something really wrong happened");
+                    return false;
+                }else {
 
-                // navigate({
-                //   pathname: `/game/${gameaddress}`,
-                // //   search: `?args=`,
-                // });
+                    console.log(response.success);
+                    const to64 = btoa(JSON.stringify(response.success));
+                    console.log(to64);
+    
+                    setLoaded(true);
+                    navigate({
+                      pathname: `/game/${to64}`,
+                    });
+                }
 
             }
         }

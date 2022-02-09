@@ -45,7 +45,6 @@ pub struct Game {
     pub game_password: String,
     pub creator_id: String,
     pub game_type: String,
-    pub game_slug: String
 }
 
 
@@ -54,7 +53,6 @@ pub struct GamePublic {
     pub game_id: String,
     pub game_name: String,
     pub game_type: String,
-    pub game_slug: String,
     pub created_at: NaiveDateTime
 }
 
@@ -126,14 +124,12 @@ pub fn insert_new_player(creator_id: String, game_id: String, player_cs: String)
     Ok(player_id.to_string())
 }
 
-pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst, game_slug: &str,) -> String {
+pub fn insert_new_game(game_name: String, game_password: String, creator_id: String, game_type: Cst) -> String {
     let pool = mysql_connection();
     let mut conn = pool.get_conn().unwrap();
 
     let game_id = Uuid::new_v4().to_string();
     let ro = game_id.clone();
-
-    let game_slug = game_slug.to_string();
 
     let game_type = game_type.to_string();
 
@@ -143,7 +139,6 @@ pub fn insert_new_game(game_name: String, game_password: String, creator_id: Str
         game_password,
         creator_id,
         game_type,
-        game_slug
     };
     //TODO: check error value here
     conn.exec_iter(
@@ -152,15 +147,13 @@ pub fn insert_new_game(game_name: String, game_password: String, creator_id: Str
             game_name,
             game_password,
             creator_id,
-            game_type,
-            game_slug
+            game_type
         ) VALUES (
             :game_id,
             :game_name,
             :game_password,
             :creator_id,
-            :game_type,
-            :game_slug
+            :game_type
         );",
         params! {
             "game_id" => game.game_id,
@@ -168,7 +161,6 @@ pub fn insert_new_game(game_name: String, game_password: String, creator_id: Str
             "game_password" => game.game_password,
             "creator_id" => game.creator_id,
             "game_type" => game.game_type,
-            "game_slug" => game.game_slug,
         },
     )
     .unwrap();
@@ -225,13 +217,13 @@ pub fn get_game(user_id: &str, page: u16)-> Vec<GamePublic> {
     let offset = (page -1) * 5u16;
 
     let ret = conn.exec_map(
-        "SELECT game_id, game_name, game_type, game_slug, created_at FROM game WHERE creator_id=:user_id LIMIT 5 OFFSET :offset;", 
+        "SELECT game_id, game_name, game_type, created_at FROM game WHERE creator_id=:user_id LIMIT 5 OFFSET :offset;", 
         params!{
             "user_id" => user_id,
             "offset" => offset
         }, 
-    |(game_id, game_name, game_type, game_slug, created_at)| {
-        GamePublic{game_id, game_name, game_type, game_slug, created_at}
+    |(game_id, game_name, game_type, created_at)| {
+        GamePublic{game_id, game_name, game_type, created_at}
     }).unwrap();
 
     ret

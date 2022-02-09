@@ -68,6 +68,7 @@ async fn main() -> std::io::Result<()> {
                     .service(create_player)
                     .service(get_playertokened)
                     .service(get_count_game_from_user_id)
+                    .service(start_game)
                     .service(crate::routes::post::get_socket_address)
             )
     })

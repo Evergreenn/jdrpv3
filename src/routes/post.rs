@@ -275,18 +275,9 @@ pub async fn start_game(
 
     let gameid_argg = format!("-g{}", game_info.game_id);
 
-<<<<<<< HEAD
-    let _output = Command::new(dotenv!("WS_BINARY_PATH"))
-        .args([socket_args, token_arg, gameid_argg])
-=======
-
-
-    // let _output = Command::new(dotenv!("WS_BINARY_PATH"))
     let _output = Command::new("/home/guillaume/Projects/test/jdrpv3-socket/target/release/jdrpv3socket")
-        .arg(cmd_args)
-        .arg(cmd_arg)
-        .arg(cmd_argg)
->>>>>>> layout fix
+    // let _output = Command::new(dotenv!("WS_BINARY_PATH"))
+        .args([socket_args, token_arg, gameid_argg])
         .spawn()
         .unwrap();
     // .expect("failed to load socket");

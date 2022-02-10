@@ -365,3 +365,8 @@ table td p {
   display: block;
   height: 100vh;
 } */
+
+/* admin container */
+.container-admin {
+  /* max-height: 100px; */
+}

@@ -220,7 +220,7 @@ pub async fn create_game(
     //TODO: start process with game parameters
 
     let token_arg = format!("-t{}", credentials.token());
-    
+
     let t = decode_jwt(credentials.token()).unwrap();
     
     let game_id = insert_new_game(
@@ -275,8 +275,18 @@ pub async fn start_game(
 
     let gameid_argg = format!("-g{}", game_info.game_id);
 
+<<<<<<< HEAD
     let _output = Command::new(dotenv!("WS_BINARY_PATH"))
         .args([socket_args, token_arg, gameid_argg])
+=======
+
+
+    // let _output = Command::new(dotenv!("WS_BINARY_PATH"))
+    let _output = Command::new("/home/guillaume/Projects/test/jdrpv3-socket/target/release/jdrpv3socket")
+        .arg(cmd_args)
+        .arg(cmd_arg)
+        .arg(cmd_argg)
+>>>>>>> layout fix
         .spawn()
         .unwrap();
     // .expect("failed to load socket");

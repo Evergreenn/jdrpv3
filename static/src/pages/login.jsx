@@ -40,8 +40,8 @@ export default function Login({ onHandleRefresh }) {
 
             setToken(response.data.jwt, response.data.expiration_time);
 
-            navigate("/", { replace: true })
             handleRefresh(true);
+            navigate("/", { replace: true })
 
         }).catch(error => {
             console.log(error);

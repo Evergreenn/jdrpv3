@@ -1,4 +1,3 @@
-import React from "react";
 import Cookies from "universal-cookie"
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
@@ -48,12 +47,14 @@ const useCookies = () => {
         const maxAge = (parseInt(expirationTime)) - (parseInt(date / 1000));
 
         console.log(token, maxAge);
-
+        
         cookies.set("token", token, {
-            sameSite: "lax",
+            sameSite: "strict",
             secure: true,
             maxAge: maxAge,
+            path: '/'
         });
+
     }
 
     const removeToken = () => {

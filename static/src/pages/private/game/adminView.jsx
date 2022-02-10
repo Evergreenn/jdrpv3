@@ -22,7 +22,7 @@ const AdminView = ({ playersDashboard, onHandleRolls }) => {
         setLoaded(false);
         setInternalDashboard(playersDashboard);
         setLoaded(true);
-    },[playersDashboard])
+    }, [playersDashboard])
 
 
     return (
@@ -40,28 +40,30 @@ const AdminView = ({ playersDashboard, onHandleRolls }) => {
                 </TabList>
 
                 <TabPanel>
-                    <div className="container ">
-                        <div className="row">
-                            {internalDashboard.length > 0 && internalDashboard.map((el, idx) => {
-                                return (<div className="card col" style={{borderLeft: "solid "+`${el.color}`}}>
-                                    <Cs key={el.player_id} player_cs={el} isAdmin={true} onHandleRolls={onHandleRolls} />
+                    <div className="container card container-admin">
+                        {/* <div className="card"> */}
+                            <div className="row">
+                                {internalDashboard.length > 0 && internalDashboard.map((el, idx) => {
+                                    return (<div className="card col">
+                                        <Cs key={el.player_id} player_cs={el} isAdmin={true} onHandleRolls={onHandleRolls} />
 
-                                </div>)
-                            })}
-                            {internalDashboard.length === 0 &&
-                            
-                            <div className="col card">
-                                <p className="is-center">No players</p>
+                                    </div>)
+                                })}
                             </div>
+                            {internalDashboard.length === 0 &&
+
+                                <div className="col card">
+                                    <p className="is-center">No players</p>
+                                </div>
                             }
-                        </div>
+                        {/* </div> */}
                     </div>
 
                 </TabPanel>
                 <TabPanel>
                     <div className="container card">
 
-                    <Maps />
+                        <Maps />
                     </div>
                 </TabPanel>
                 <TabPanel>

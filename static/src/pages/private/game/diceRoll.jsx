@@ -69,7 +69,6 @@ const DiceRoll = ({playerId, onHandleRolls, stat, isAdmin  }) => {
         <>
             <div className="row">
                 <div className="col">
-                    
                     {isAdmin &&
                       <label>
                       Private Roll
